@@ -45,4 +45,34 @@ class RegistrationController {
     }
     return provinces;
   }
+
+  static Future<void> registerUser(Map<String, String> data) async {
+    try {
+      final body = {
+        "first_name": "EISSANOOR1",
+        "last_name": "NOOR",
+        "street_address": "ABC",
+        "barangay": "ABC",
+        "province": "ABC",
+        "city": "ABC",
+        "club_name": "ABC",
+        "club_region": "ABC",
+        "club_president": "ABC",
+        "national_president": "ABC",
+        "date": "12-23-2333",
+        "pe_ID": "NO/YES",
+        "club_secretry_name": "ABC",
+        "club_secretry_NO": "0336123"
+      };
+      var response =
+          await _apiManager.postRequest(body, "${URL.baseUrl}tblPostMembers");
+      if (response != null && response.statusCode == 200) {
+        print("User registered successfully");
+      } else {
+        throw Exception('An error occurred while registering user!');
+      }
+    } catch (error) {
+      rethrow;
+    }
+  }
 }

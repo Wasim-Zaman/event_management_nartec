@@ -53,7 +53,7 @@ class _DateFieldWidgetState extends State<DateFieldWidget> {
                 lastDate: DateTime(2100),
               );
               if (date != null) {
-                widget.controller.text = DateFormat.MMMMEEEEd().format(date);
+                widget.controller.text = DateFormat.yMMMd().format(date);
               }
             },
             icon: Icon(

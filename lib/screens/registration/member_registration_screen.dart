@@ -1,6 +1,8 @@
 // ignore_for_file: library_private_types_in_public_api, non_constant_identifier_names
 
 import 'package:event_management/controllers/registration/registration_controller.dart';
+import 'package:event_management/utils/snackbars/app_snackbars.dart';
+import 'package:event_management/utils/toasts/app_toasts.dart';
 import 'package:event_management/widgets/buttons/primary_button_widget.dart';
 import 'package:event_management/widgets/dropdown/dropdown_widget.dart';
 import 'package:event_management/widgets/text/required_text_widget.dart';
@@ -9,6 +11,7 @@ import 'package:event_management/widgets/text_fields/mobile_number_text_field.da
 import 'package:event_management/widgets/text_fields/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 class MemberRegistrationScreen extends StatefulWidget {
   const MemberRegistrationScreen({super.key});
@@ -21,6 +24,7 @@ class MemberRegistrationScreen extends StatefulWidget {
 class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
     with SingleTickerProviderStateMixin {
   bool screenLoaded = false;
+  bool isSubmit = false;
 
   late TabController _tabController;
 
@@ -120,6 +124,39 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
       setState(() {
         screenLoaded = true;
       });
+    });
+  }
+
+  register() {
+    if (!isSubmit) {
+      isSubmit = true;
+    } else {
+      return;
+    }
+    AppSnackbars.successSnackbar(context, "Please wait...");
+    RegistrationController.registerUser({
+      "first_name": firstNameController.text,
+      "last_name": lastNameController.text,
+      "street_address": streetController.text,
+      "barangay": selectedBarangay,
+      "province": selectedProvince,
+      "city": selectedCity,
+      "club_name": clubNameController.text,
+      "club_region": selectedClubRegion,
+      "club_president": clubPresidentController.text,
+      "national_president": nationalPresidentController.text,
+      "date": dateController.text,
+      "pe_ID": selectedYesNo,
+      "club_secretry_name": clubSecretaryController.text,
+      "club_secretry_NO": mobileNumberController.text,
+    }).then((_) {
+      isSubmit = false;
+      // AppToasts.successToast("Registration Successful");
+      AppSnackbars.successSnackbar(context, "Registration Successful");
+      Navigator.pop(context);
+    }).onError((error, stackTrace) {
+      // AppToasts.errorToast(error.toString());
+      AppSnackbars.errorSnackbar(context, error.toString());
     });
   }
 
@@ -323,7 +360,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                   const RequiredTextWidget(text: "National President"),
                   const SizedBox(height: 10),
                   TextFieldWidget(
-                    controller: lastNameController,
+                    controller: nationalPresidentController,
                     label: "Enter Your National President",
                     focusNode: streetNode,
                   ),
@@ -364,7 +401,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                   PrimaryButtonWidget(
                     caption: "Submit",
                     onPressed: () {
-                      // submit
+                      register();
                     },
                   ),
                 ],

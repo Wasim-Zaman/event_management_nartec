@@ -31,6 +31,8 @@ class _MyAppState extends State<MyApp> {
           debugShowCheckedModeBanner: false,
           title: 'Event Management',
           theme: ThemeData(
+            primaryColor: AppColors.primaryColor,
+            scaffoldBackgroundColor: AppColors.backgroundColor,
             appBarTheme: AppBarTheme(
               backgroundColor: AppColors.primaryColor,
               foregroundColor: AppColors.appTextColorPrimary,
