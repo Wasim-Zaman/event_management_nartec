@@ -14,7 +14,7 @@ class RegistrationController {
           await _apiManager.getRequest("${URL.baseUrl}ListOfDropDownCities");
       if (response != null && response.statusCode == 200) {
         var data = json.decode(response.body) as Map;
-        final List<dynamic> citiesList = data['recordsets'] as List;
+        final List<dynamic> citiesList = data['recordsets'][0];
         cities = citiesList.map((city) => Cities.fromJson(city)).toList();
       } else {
         throw Exception('Failed to load data!');
@@ -29,13 +29,14 @@ class RegistrationController {
     List<Provinces> provinces = [];
     try {
       var response =
-          await _apiManager.getRequest("${URL.baseUrl}ListOfDropDownCities");
+          await _apiManager.getRequest("${URL.baseUrl}ListOfDropDownProvince");
       if (response != null && response.statusCode == 200) {
         var data = json.decode(response.body) as Map;
-        final List<dynamic> provincesList = data['recordsets'] as List;
+        final List<dynamic> provincesList = data['recordsets'][0];
         provinces = provincesList.map((province) {
           return Provinces.fromJson(province);
         }).toList();
+        print("Provinces got successfully");
       } else {
         throw Exception('Failed to load data!');
       }

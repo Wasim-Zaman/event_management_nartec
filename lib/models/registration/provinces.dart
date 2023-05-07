@@ -1,15 +1,15 @@
 class Provinces {
-  String? citiyname;
+  String? provincename;
 
-  Provinces({this.citiyname});
+  Provinces({this.provincename});
 
   Provinces.fromJson(Map<String, dynamic> json) {
-    citiyname = json['Citiyname'];
+    provincename = json['provincename'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['Citiyname'] = citiyname;
+    data['provincename'] = provincename;
     return data;
   }
 }

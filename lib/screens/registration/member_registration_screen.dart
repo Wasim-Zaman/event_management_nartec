@@ -1,5 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api, non_constant_identifier_names
 
+import 'package:event_management/controllers/registration/registration_controller.dart';
 import 'package:event_management/widgets/buttons/primary_button_widget.dart';
 import 'package:event_management/widgets/dropdown/dropdown_widget.dart';
 import 'package:event_management/widgets/text/required_text_widget.dart';
@@ -19,6 +20,8 @@ class MemberRegistrationScreen extends StatefulWidget {
 
 class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
     with SingleTickerProviderStateMixin {
+  bool screenLoaded = false;
+
   late TabController _tabController;
 
   // text fields controllers
@@ -42,33 +45,17 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
   final FocusNode clubSecretaryNode = FocusNode();
 
   // dropdown lists
-  final List<String> provinceList = [
-    'Eastern Cape',
-    'Free State',
-    'Gauteng',
-    'KwaZulu-Natal',
-    'Limpopo',
-    'Mpumalanga',
-    'North West',
-    'Northern Cape',
-    'Western Cape',
+  List<String> provinceList = [
+    "Aklan",
+    "Albay",
   ];
-  final List<String> citiesList = [
-    'Port Elizabeth',
-    'East London',
-    'Queenstown',
-    'Grahamstown',
-    'Uitenhage',
-    "King William’s Town",
-    'Mthatha',
-    'Cradock',
-    'Graaff-Reinet',
-    'Aliwal North',
-    'Bhisho',
-    'Butterworth',
-    'Fort Beaufort',
-    'Middelburg',
-    'Cofimvaba',
+  List<String> citiesList = [
+    "Alang-alang",
+    "Baliok",
+    "Bantigue",
+    "Bato",
+    "Binaliw",
+    "Bito-on",
   ];
   final List<String> barangayList = [
     "Alang-alang",
@@ -94,16 +81,46 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
   ];
 
   // dropdown values
-  String selectedProvince = 'Eastern Cape';
-  String selectedCity = 'Port Elizabeth';
-  String selectedBarangay = 'Alang-alang';
-  String selectedClubRegion = 'Alang-alang';
-  String selectedYesNo = 'Yes';
+  String selectedProvince = "Aklan";
+  String selectedCity = "Alang-alang";
+  String selectedBarangay = "Alang-alang";
+  String selectedClubRegion = "Alang-alang";
+  String selectedYesNo = "Yes";
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: 2);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Future.wait(
+      [
+        // Api calls
+        RegistrationController.getAllCities().then((response) {
+          setState(() {
+            citiesList = response.map((city) {
+              return city.citiyname.toString();
+            }).toList();
+            selectedCity = citiesList.first;
+          });
+        }),
+        RegistrationController.getAllProvinces().then((response) {
+          setState(() {
+            provinceList = response.map((province) {
+              return province.provincename.toString();
+            }).toList();
+            selectedProvince = provinceList.first;
+          });
+        }),
+      ],
+    ).then((_) {
+      setState(() {
+        screenLoaded = true;
+      });
+    });
   }
 
   @override
@@ -146,11 +163,17 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [
-          personalInformation(),
-          // second screen
-          toePeDetails(),
-        ],
+        children: !screenLoaded
+            ? [
+                const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ]
+            : [
+                personalInformation(),
+                // second screen
+                toePeDetails(),
+              ],
       ),
     );
   }
@@ -239,6 +262,16 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                   PrimaryButtonWidget(
                     caption: "Next",
                     onPressed: () {
+                      if (firstNameController.text.isEmpty ||
+                          lastNameController.text.isEmpty ||
+                          streetController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Please fill all required fields"),
+                          ),
+                        );
+                        return;
+                      }
                       _tabController.animateTo(1);
                     },
                   ),

@@ -1,5 +1,7 @@
 import 'package:event_management/constants/api_manager.dart';
+import 'package:event_management/constants/app_colors.dart';
 import 'package:event_management/constants/url.dart';
+import 'package:event_management/screens/profile/member_profile_screen.dart';
 import 'package:event_management/screens/registration/member_registration_screen.dart';
 import 'package:event_management/widgets/buttons/primary_button_widget.dart';
 import 'package:event_management/widgets/text_fields/password_text_field_widget.dart';
@@ -42,9 +44,20 @@ class _MemberLoginScreenState extends State<MemberLoginScreen> {
 
       response.then((value) {
         if (value.statusCode == 200) {
-          print(value.body);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return const MemberProfileScreen();
+              },
+              fullscreenDialog: true,
+            ),
+          );
         } else {
-          print(value.body);
+          Fluttertoast.showToast(
+            msg: "Invalid credentials",
+            backgroundColor: AppColors.dangerColor,
+          );
         }
       });
 

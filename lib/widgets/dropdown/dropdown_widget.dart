@@ -41,12 +41,14 @@ class _DropdownWidgetState extends State<DropdownWidget> {
         ),
         isExpanded: true,
         underline: Container(),
-        items: widget.stringList.map((String string) {
-          return DropdownMenuItem<String>(
-            value: string,
-            child: Text(string),
-          );
-        }).toList(),
+        items: widget.stringList.isEmpty
+            ? []
+            : widget.stringList.map((String string) {
+                return DropdownMenuItem<String>(
+                  value: string,
+                  child: Text(string),
+                );
+              }).toList(),
         onChanged: widget.onChanged ?? (_) {},
       ),
     );
