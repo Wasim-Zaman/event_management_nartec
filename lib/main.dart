@@ -1,7 +1,6 @@
-import 'package:event_management/constants/app_colors.dart';
+import 'package:event_management/constants/app_theme.dart';
 import 'package:event_management/screens/login/member_login_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nb_utils/nb_utils.dart';
 
@@ -30,22 +29,7 @@ class _MyAppState extends State<MyApp> {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Event Management',
-          theme: ThemeData(
-            primaryColor: AppColors.primaryColor,
-            scaffoldBackgroundColor: AppColors.backgroundColor,
-            appBarTheme: AppBarTheme(
-              backgroundColor: AppColors.primaryColor,
-              foregroundColor: AppColors.appTextColorPrimary,
-              systemOverlayStyle: SystemUiOverlayStyle(
-                statusBarColor: AppColors.primaryColor,
-                statusBarIconBrightness: Brightness.light,
-              ),
-              iconTheme: IconThemeData(
-                color: AppColors.appTextColorPrimary,
-                size: 24.sp,
-              ),
-            ),
-          ),
+          theme: AppTheme.themeData,
           home: const MemberLoginScreen(),
         );
       },
