@@ -49,20 +49,20 @@ class RegistrationController {
   static Future<void> registerUser(Map<String, String> data) async {
     try {
       final body = {
-        "first_name": "EISSANOOR1",
-        "last_name": "NOOR",
-        "street_address": "ABC",
-        "barangay": "ABC",
-        "province": "ABC",
-        "city": "ABC",
-        "club_name": "ABC",
-        "club_region": "ABC",
-        "club_president": "ABC",
-        "national_president": "ABC",
-        "date": "12-23-2333",
-        "pe_ID": "NO/YES",
-        "club_secretry_name": "ABC",
-        "club_secretry_NO": "0336123"
+        "first_name": data['first_name'],
+        "last_name": data['last_name'],
+        "street_address": data['street_address'],
+        "barangay": data['barangay'],
+        "province": data['province'],
+        "city": data['city'],
+        "club_name": data['club_name'],
+        "club_region": data['club_region'],
+        "club_president": data['club_president'],
+        "national_president": data['national_president'],
+        "date": data['date'],
+        "pe_ID": data['pe_ID'],
+        "club_secretry_name": data['club_secretry_name'],
+        "club_secretry_NO": data['club_secretry_NO'],
       };
       var response =
           await _apiManager.postRequest(body, "${URL.baseUrl}tblPostMembers");
