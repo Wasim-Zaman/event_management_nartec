@@ -38,9 +38,9 @@ class ApiManager {
     var response = await http.post(
       Uri.parse(url),
       body: body,
-      // headers: {
-      //   'Authorization': '',
-      // },
+      headers: {
+        'Authorization': '',
+      },
     );
 
     if (response.statusCode == 200 || response.statusCode == 400) {

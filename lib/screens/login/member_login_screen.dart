@@ -31,9 +31,6 @@ class _MemberLoginScreenState extends State<MemberLoginScreen> {
       );
       isPressed = false;
     } else {
-      Fluttertoast.showToast(
-        msg: "Please wait...",
-      );
       final response = ApiManager().postRequest(
         {
           "email": emailController.text,
