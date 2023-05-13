@@ -1,6 +1,5 @@
 import 'package:event_management/constants/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:nb_utils/nb_utils.dart';
 
 class PasswordTextFieldWidget extends StatefulWidget {
   const PasswordTextFieldWidget({
@@ -12,6 +11,7 @@ class PasswordTextFieldWidget extends StatefulWidget {
     this.textInputAction,
     this.keyboardType,
     this.validator,
+    this.onFieldSubmitted,
   }) : super(key: key);
 
   final TextEditingController controller;
@@ -21,6 +21,7 @@ class PasswordTextFieldWidget extends StatefulWidget {
   final TextInputAction? textInputAction;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
+  final Function(String)? onFieldSubmitted;
 
   @override
   State<PasswordTextFieldWidget> createState() =>
@@ -34,10 +35,11 @@ class _PasswordTextFieldWidgetState extends State<PasswordTextFieldWidget> {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: widget.controller,
-      // focusNode: widget.focusNode ?? FocusNode(),
+      focusNode: widget.focusNode ?? FocusNode(),
       style: const TextStyle(fontSize: 18),
       obscureText: obscureText,
-      //onFieldSubmitted: (value) => widget.focusNode?.nextFocus(),
+      onFieldSubmitted: (value) =>
+          widget.onFieldSubmitted ?? widget.focusNode?.nextFocus(),
       textInputAction: widget.textInputAction ?? TextInputAction.done,
       keyboardType: widget.keyboardType ?? TextInputType.visiblePassword,
       validator: widget.validator ?? (value) => null,

@@ -25,13 +25,16 @@ class _DropdownWidgetState extends State<DropdownWidget> {
   Widget build(BuildContext context) {
     return Container(
       width: context.width(),
-      height: context.height() / 15,
+      height: context.height() * 0.07,
       padding: const EdgeInsets.only(left: 50, right: 10),
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(
           Radius.circular(10),
         ),
-        color: AppColors.appGreyColor,
+        border: Border.all(
+          color: AppColors.primaryColor,
+        ),
+        // color: AppColors.appGreyColor,
       ),
       child: DropdownButton<String>(
         value: widget.selectedString,

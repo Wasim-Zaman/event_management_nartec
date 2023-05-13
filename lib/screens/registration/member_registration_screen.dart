@@ -4,6 +4,7 @@ import 'package:event_management/controllers/registration/registration_controlle
 import 'package:event_management/utils/snackbars/app_snackbars.dart';
 import 'package:event_management/widgets/buttons/primary_button_widget.dart';
 import 'package:event_management/widgets/dropdown/dropdown_widget.dart';
+import 'package:event_management/widgets/loading_widget/app_loading_widget.dart';
 import 'package:event_management/widgets/text/required_text_widget.dart';
 import 'package:event_management/widgets/text_fields/date_field_widget.dart';
 import 'package:event_management/widgets/text_fields/mobile_number_text_field.dart';
@@ -208,9 +209,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
         controller: _tabController,
         children: !screenLoaded
             ? [
-                const Center(
-                  child: CircularProgressIndicator(),
-                ),
+                const AppLoadingWidget(),
               ]
             : [
                 personalInformation(),
@@ -249,7 +248,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                     prefixIcon: Ionicons.person_outline,
                     focusNode: lastNameNode,
                     onFieldSubmitted: (p0) {
-                      FocusScope.of(context).requestFocus(streetNode);
+                      FocusScope.of(context).requestFocus(emailNode);
                     },
                   ),
                   const SizedBox(height: 20),
@@ -258,7 +257,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                   TextFieldWidget(
                     controller: emailController,
                     prefixIcon: Ionicons.mail_outline,
-                    label: "Email",
+                    label: "Enter Your Email",
                     onFieldSubmitted: (p0) {
                       FocusScope.of(context).requestFocus(passwordNode);
                     },
@@ -275,7 +274,10 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                   PasswordTextFieldWidget(
                     controller: passwordController,
                     prefixIcon: Ionicons.lock_closed_outline,
-                    label: "Password",
+                    label: "Enter Your Password",
+                    onFieldSubmitted: (p0) {
+                      FocusScope.of(context).requestFocus(streetNode);
+                    },
                   ),
                   const SizedBox(height: 20),
                   const RequiredTextWidget(text: "Street Address"),
@@ -385,7 +387,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                   const SizedBox(height: 10),
                   TextFieldWidget(
                     controller: clubPresidentController,
-                    label: "Enter your Club President",
+                    label: "Enter Your Club President",
                   ),
                   const SizedBox(height: 20),
                   const RequiredTextWidget(text: "National President"),

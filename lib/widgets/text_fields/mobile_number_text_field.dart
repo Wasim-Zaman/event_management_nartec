@@ -17,33 +17,38 @@ class MobileNumberTextField extends StatefulWidget {
 class _MobileNumberTextFieldState extends State<MobileNumberTextField> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.appGreyColor,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      alignment: Alignment.center,
-      child: TextFormField(
-        controller: widget.controller,
-        style: const TextStyle(fontSize: 18),
-        keyboardType: TextInputType.number,
-        decoration: InputDecoration(
-          hintText: "Enter Mobile Number",
-          border: InputBorder.none,
-          prefixIcon: CountryCodePicker(
-            initialSelection: 'SA',
-            showCountryOnly: true,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            showOnlyCountryWhenClosed: true,
-            alignLeft: false,
-            hideMainText: true,
-            onInit: (value) {
-              widget.controller.text = value!.dialCode.toString();
-            },
-            onChanged: (value) {
-              widget.controller.text = value.dialCode.toString();
-            },
+    return TextFormField(
+      controller: widget.controller,
+      style: const TextStyle(fontSize: 18),
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(
+        hintText: "Enter Mobile Number",
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            color: AppColors.primaryColor,
           ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            color: AppColors.primaryColor,
+            width: 3,
+          ),
+        ),
+        prefixIcon: CountryCodePicker(
+          initialSelection: 'SA',
+          showCountryOnly: true,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          showOnlyCountryWhenClosed: true,
+          alignLeft: false,
+          hideMainText: true,
+          onInit: (value) {
+            widget.controller.text = value!.dialCode.toString();
+          },
+          onChanged: (value) {
+            widget.controller.text = value.dialCode.toString();
+          },
         ),
       ),
     );
