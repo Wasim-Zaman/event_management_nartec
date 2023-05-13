@@ -2,19 +2,11 @@
 
 import 'package:event_management/constants/app_colors.dart';
 import 'package:event_management/controllers/profile/profile_controller.dart';
-import 'package:event_management/controllers/registration/registration_controller.dart';
 import 'package:event_management/models/profile/profile_model.dart';
 import 'package:event_management/utils/snackbars/app_snackbars.dart';
-import 'package:event_management/widgets/buttons/primary_button_widget.dart';
-import 'package:event_management/widgets/dropdown/dropdown_widget.dart';
 import 'package:event_management/widgets/loading_widget/app_loading_widget.dart';
 import 'package:event_management/widgets/text/container_text_widget.dart';
 import 'package:event_management/widgets/text/heading_text_widget.dart';
-import 'package:event_management/widgets/text/required_text_widget.dart';
-import 'package:event_management/widgets/text_fields/date_field_widget.dart';
-import 'package:event_management/widgets/text_fields/mobile_number_text_field.dart';
-import 'package:event_management/widgets/text_fields/password_text_field_widget.dart';
-import 'package:event_management/widgets/text_fields/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
@@ -35,83 +27,19 @@ class _MemberProfileScreenState extends State<MemberProfileScreen>
     initialIndex: 0,
   );
 
-  // text fields controllers
-  final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController lastNameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController streetAddressController = TextEditingController();
-  final TextEditingController streetController = TextEditingController();
-
-  final TextEditingController clubNameController = TextEditingController();
-  final TextEditingController clubPresidentController = TextEditingController();
-  final TextEditingController nationalPresidentController =
-      TextEditingController();
-  final TextEditingController clubSecretaryController = TextEditingController();
-  final TextEditingController dateController = TextEditingController();
-  final TextEditingController mobileNumberController = TextEditingController();
-
-  // focus nodes
-  final FocusNode lastNameNode = FocusNode();
-  final FocusNode emailNode = FocusNode();
-  final FocusNode passwordNode = FocusNode();
-  final FocusNode streetAddressNode = FocusNode();
-  final FocusNode streetNode = FocusNode();
-  final FocusNode clubPresidentNode = FocusNode();
-  final FocusNode nationalPresidentNode = FocusNode();
-  final FocusNode clubSecretaryNode = FocusNode();
-
-  // dropdown lists
-  List<String> provinceList = [
-    "Aklan",
-    "Albay",
-  ];
-  List<String> citiesList = [
-    "Alang-alang",
-    "Baliok",
-    "Bantigue",
-    "Bato",
-    "Binaliw",
-    "Bito-on",
-  ];
-  final List<String> barangayList = [
-    "Alang-alang",
-    "Baliok",
-    "Bantigue",
-    "Bato",
-    "Binaliw",
-    "Bito-on",
-  ];
-
-  final List<String> clubRegionsList = [
-    "Alang-alang",
-    "Baliok",
-    "Bantigue",
-    "Bato",
-    "Binaliw",
-    "Bito-on",
-  ];
-
-  final List<String> yesNoList = [
-    'Yes',
-    'No',
-  ];
-
-  // dropdown values
-  String selectedProvince = "Aklan";
-  String selectedCity = "Alang-alang";
-  String selectedBarangay = "Alang-alang";
-  String selectedClubRegion = "Alang-alang";
-  String selectedYesNo = "Yes";
-
   late ProfileModel profileModel;
-
+  late String email, password;
   @override
   void initState() {
     super.initState();
 
+    // Get email and password from previous screen
+    final Map<String, dynamic> arguments =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    email = arguments["email"];
+    password = arguments["password"];
     // Api calls
-    ProfileController.getMember("wasim@gmail.com", "wasim123").then((model) {
+    ProfileController.getMember(email, password).then((model) {
       setState(() {
         profileModel = model;
         screenLoaded = true;
@@ -127,14 +55,6 @@ class _MemberProfileScreenState extends State<MemberProfileScreen>
   @override
   void dispose() {
     tabController.dispose();
-    firstNameController.dispose();
-    lastNameController.dispose();
-    streetAddressController.dispose();
-    clubNameController.dispose();
-    clubPresidentController.dispose();
-    nationalPresidentController.dispose();
-    clubSecretaryController.dispose();
-    dateController.dispose();
     super.dispose();
   }
 
