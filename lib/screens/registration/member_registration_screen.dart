@@ -216,7 +216,6 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
               ]
             : [
                 personalInformation(),
-                // second screen
                 toePeDetails(),
               ],
       ),
