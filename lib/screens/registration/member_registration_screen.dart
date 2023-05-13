@@ -26,7 +26,11 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
     with SingleTickerProviderStateMixin {
   bool screenLoaded = false;
 
-  late TabController _tabController;
+  late TabController tabController = TabController(
+    length: 2,
+    vsync: this,
+    initialIndex: 0,
+  );
 
   // text fields controllers
   final TextEditingController firstNameController = TextEditingController();
@@ -34,6 +38,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController streetAddressController = TextEditingController();
+  final TextEditingController streetController = TextEditingController();
 
   final TextEditingController clubNameController = TextEditingController();
   final TextEditingController clubPresidentController = TextEditingController();
@@ -48,6 +53,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
   final FocusNode emailNode = FocusNode();
   final FocusNode passwordNode = FocusNode();
   final FocusNode streetAddressNode = FocusNode();
+  final FocusNode streetNode = FocusNode();
   final FocusNode clubPresidentNode = FocusNode();
   final FocusNode nationalPresidentNode = FocusNode();
   final FocusNode clubSecretaryNode = FocusNode();
@@ -98,37 +104,23 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(
-      vsync: this,
-      length: 2,
-      initialIndex: 0,
-    );
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
     Future.wait(
       [
         // Api calls
         RegistrationController.getAllCities().then((response) {
           Future.delayed(Duration.zero, () {
-            setState(() {
-              citiesList = response.map((city) {
-                return city.citiyname.toString();
-              }).toList();
-              selectedCity = citiesList.first;
-            });
+            citiesList = response.map((city) {
+              return city.citiyname.toString();
+            }).toList();
+            selectedCity = citiesList.first;
           });
         }),
         RegistrationController.getAllProvinces().then((response) {
           Future.delayed(Duration.zero, () {
-            setState(() {
-              provinceList = response.map((province) {
-                return province.provincename.toString();
-              }).toList();
-              selectedProvince = provinceList.first;
-            });
+            provinceList = response.map((province) {
+              return province.provincename.toString();
+            }).toList();
+            selectedProvince = provinceList.first;
           });
         }),
       ],
@@ -137,7 +129,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
         setState(() {
           screenLoaded = true;
         });
-      });
+      }).onError((error, stackTrace) => null);
     });
   }
 
@@ -147,7 +139,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
       "password": passwordController.text,
       "first_name": firstNameController.text,
       "last_name": lastNameController.text,
-      "street_address": streetAddressController.text,
+      "street_address": streetController.text,
       "barangay": selectedBarangay,
       "province": selectedProvince,
       "city": selectedCity,
@@ -174,7 +166,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
 
   @override
   void dispose() {
-    _tabController.dispose();
+    tabController.dispose();
     firstNameController.dispose();
     lastNameController.dispose();
     streetAddressController.dispose();
@@ -200,7 +192,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
       appBar: AppBar(
         title: const Text('Member Registration'),
         bottom: TabBar(
-          controller: _tabController,
+          controller: tabController,
           indicator: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             color: AppColors.successColor,
@@ -216,10 +208,11 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
         ),
       ),
       body: TabBarView(
-        controller: _tabController,
+        controller: tabController,
         children: !screenLoaded
             ? [
                 const AppLoadingWidget(),
+                const SizedBox.shrink(),
               ]
             : [
                 personalInformation(),
@@ -289,26 +282,22 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                     focusNode: passwordNode,
                     textInputAction: TextInputAction.next,
                     onFieldSubmitted: (p0) {
-                      FocusScope.of(context).requestFocus(streetAddressNode);
+                      FocusScope.of(context).requestFocus(streetNode);
                     },
                   ),
                   const SizedBox(height: 10.0),
                   const RequiredTextWidget(text: "Street Address"),
                   const SizedBox(height: 5.0),
                   TextFieldWidget(
-                    controller: streetAddressController,
-                    focusNode: streetAddressNode,
+                    controller: streetController,
+                    focusNode: streetNode,
                     prefixIcon: Ionicons.location_outline,
                     label: "Enter Your Street Address",
-                    onFieldSubmitted: (p0) {},
-                    validator: (p0) {
-                      if (p0!.isEmpty) {
-                        return "This field is required";
-                      }
-                      return null;
-                    },
+                    textInputAction: TextInputAction.done,
                   ),
+
                   const SizedBox(height: 10.0),
+
                   const RequiredTextWidget(text: "Province"),
                   const SizedBox(height: 5.0),
                   // province dropdown
@@ -361,7 +350,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                         );
                         return;
                       }
-                      _tabController.animateTo(1);
+                      tabController.animateTo(1);
                     },
                   ),
                 ],

@@ -48,11 +48,13 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
         keyboardType: widget.keyboardType ?? TextInputType.text,
         // validator: widget.validator ?? (value) => null,
         autovalidateMode: AutovalidateMode.onUserInteraction,
+        readOnly: false,
         decoration: InputDecoration(
           hintText: widget.label ?? "",
           hintStyle: AppTextStyle.textFieldLabel,
           labelStyle: AppTextStyle.textFieldLabel,
           errorMaxLines: 1,
+          enabled: true,
           focusedErrorBorder: InputBorder.none,
           prefixIcon: Icon(
             widget.prefixIcon,
