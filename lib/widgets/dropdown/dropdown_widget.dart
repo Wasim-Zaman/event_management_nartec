@@ -49,7 +49,7 @@ class _DropdownWidgetState extends State<DropdownWidget> {
             : widget.stringList.map((String string) {
                 return DropdownMenuItem<String>(
                   value: string,
-                  child: Text(string),
+                  child: Text(string, style: const TextStyle(fontSize: 16)),
                 );
               }).toList(),
         onChanged: widget.onChanged ?? (_) {},

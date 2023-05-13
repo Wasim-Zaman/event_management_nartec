@@ -45,6 +45,8 @@ class _PasswordTextFieldWidgetState extends State<PasswordTextFieldWidget> {
       validator: widget.validator ?? (value) => null,
       decoration: InputDecoration(
         hintText: widget.label ?? "Password",
+        hintStyle: const TextStyle(fontSize: 16),
+        labelStyle: const TextStyle(fontSize: 16),
         prefixIcon: Icon(
           widget.prefixIcon ?? Icons.lock_outline,
           color: AppColors.primaryColor,

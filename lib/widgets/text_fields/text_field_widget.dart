@@ -43,6 +43,8 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
         hintText: widget.label ?? "",
+        hintStyle: const TextStyle(fontSize: 16),
+        labelStyle: const TextStyle(fontSize: 16),
         errorMaxLines: 1,
         focusedErrorBorder: InputBorder.none,
         prefixIcon: Icon(
