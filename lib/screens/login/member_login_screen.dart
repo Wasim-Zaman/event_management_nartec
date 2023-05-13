@@ -43,13 +43,15 @@ class _MemberLoginScreenState extends State<MemberLoginScreen> {
 
       response.then((value) {
         if (value.statusCode == 200) {
-          Navigator.push(
-            context,
+          Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) {
                 return const MemberProfileScreen();
               },
-              fullscreenDialog: true,
+              settings: RouteSettings(arguments: {
+                "email": emailController.text,
+                "password": passwordController.text,
+              }),
             ),
           );
         } else {
