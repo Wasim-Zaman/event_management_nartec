@@ -2,16 +2,15 @@
 
 import 'package:event_management/controllers/registration/registration_controller.dart';
 import 'package:event_management/utils/snackbars/app_snackbars.dart';
-import 'package:event_management/utils/toasts/app_toasts.dart';
 import 'package:event_management/widgets/buttons/primary_button_widget.dart';
 import 'package:event_management/widgets/dropdown/dropdown_widget.dart';
 import 'package:event_management/widgets/text/required_text_widget.dart';
 import 'package:event_management/widgets/text_fields/date_field_widget.dart';
 import 'package:event_management/widgets/text_fields/mobile_number_text_field.dart';
+import 'package:event_management/widgets/text_fields/password_text_field_widget.dart';
 import 'package:event_management/widgets/text_fields/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:nb_utils/nb_utils.dart';
 
 class MemberRegistrationScreen extends StatefulWidget {
   const MemberRegistrationScreen({super.key});
@@ -31,6 +30,8 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
   // text fields controllers
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   final TextEditingController streetController = TextEditingController();
 
   final TextEditingController clubNameController = TextEditingController();
@@ -43,6 +44,8 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
 
   // focus nodes
   final FocusNode lastNameNode = FocusNode();
+  final FocusNode emailNode = FocusNode();
+  final FocusNode passwordNode = FocusNode();
   final FocusNode streetNode = FocusNode();
   final FocusNode clubPresidentNode = FocusNode();
   final FocusNode nationalPresidentNode = FocusNode();
@@ -173,11 +176,14 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
     dateController.dispose();
     // nodes
     lastNameNode.dispose();
+    emailNode.dispose();
+    passwordNode.dispose();
     streetNode.dispose();
     clubPresidentNode.dispose();
     nationalPresidentNode.dispose();
     clubSecretaryNode.dispose();
 
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -245,6 +251,31 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                     onFieldSubmitted: (p0) {
                       FocusScope.of(context).requestFocus(streetNode);
                     },
+                  ),
+                  const SizedBox(height: 20),
+                  const RequiredTextWidget(text: "Email"),
+                  const SizedBox(height: 10),
+                  TextFieldWidget(
+                    controller: emailController,
+                    prefixIcon: Ionicons.mail_outline,
+                    label: "Email",
+                    onFieldSubmitted: (p0) {
+                      FocusScope.of(context).requestFocus(passwordNode);
+                    },
+                    validator: (p0) {
+                      if (p0!.isEmpty) {
+                        return "Email is required";
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  const RequiredTextWidget(text: "Password"),
+                  const SizedBox(height: 10),
+                  PasswordTextFieldWidget(
+                    controller: passwordController,
+                    prefixIcon: Ionicons.lock_closed_outline,
+                    label: "Password",
                   ),
                   const SizedBox(height: 20),
                   const RequiredTextWidget(text: "Street Address"),

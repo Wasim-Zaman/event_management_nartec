@@ -32,39 +32,49 @@ class _PasswordTextFieldWidgetState extends State<PasswordTextFieldWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: context.height() / 15,
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-        color: AppColors.appGreyColor,
-      ),
-      alignment: Alignment.center,
-      child: TextFormField(
-        controller: widget.controller,
-        // focusNode: widget.focusNode ?? FocusNode(),
-        style: const TextStyle(fontSize: 18),
-        obscureText: obscureText,
-        //onFieldSubmitted: (value) => widget.focusNode?.nextFocus(),
-        textInputAction: widget.textInputAction ?? TextInputAction.done,
-        keyboardType: widget.keyboardType ?? TextInputType.visiblePassword,
-        validator: widget.validator ?? (value) => null,
-        decoration: InputDecoration(
-          hintText: widget.label ?? "Password",
-          prefixIcon: Icon(
-            widget.prefixIcon ?? Icons.lock_outline,
+    return TextFormField(
+      controller: widget.controller,
+      // focusNode: widget.focusNode ?? FocusNode(),
+      style: const TextStyle(fontSize: 18),
+      obscureText: obscureText,
+      //onFieldSubmitted: (value) => widget.focusNode?.nextFocus(),
+      textInputAction: widget.textInputAction ?? TextInputAction.done,
+      keyboardType: widget.keyboardType ?? TextInputType.visiblePassword,
+      validator: widget.validator ?? (value) => null,
+      decoration: InputDecoration(
+        hintText: widget.label ?? "Password",
+        prefixIcon: Icon(
+          widget.prefixIcon ?? Icons.lock_outline,
+          color: AppColors.primaryColor,
+          size: 28,
+        ),
+        suffixIcon: IconButton(
+          icon: Icon(obscureText ? Icons.visibility : Icons.visibility_off,
+              color: AppColors.primaryColor),
+          onPressed: () {
+            setState(() {
+              obscureText = !obscureText;
+            });
+          },
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            color: AppColors.dangerColor,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
             color: AppColors.primaryColor,
-            size: 28,
           ),
-          suffixIcon: IconButton(
-            icon: Icon(obscureText ? Icons.visibility : Icons.visibility_off,
-                color: AppColors.primaryColor),
-            onPressed: () {
-              setState(() {
-                obscureText = !obscureText;
-              });
-            },
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            color: AppColors.primaryColor,
+            width: 3,
           ),
-          border: InputBorder.none,
         ),
       ),
     );

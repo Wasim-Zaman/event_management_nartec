@@ -31,36 +31,47 @@ class TextFieldWidget extends StatefulWidget {
 class _TextFieldWidgetState extends State<TextFieldWidget> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: context.height() / 15,
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-        color: AppColors.appGreyColor,
-      ),
-      alignment: Alignment.center,
-      child: TextFormField(
-        controller: widget.controller,
-        style: const TextStyle(fontSize: 18),
-
-        focusNode: widget.focusNode ?? FocusNode(),
-        onFieldSubmitted:
-            widget.onFieldSubmitted ?? (value) => widget.focusNode?.nextFocus(),
-        textInputAction: widget.textInputAction ?? TextInputAction.next,
-        keyboardType: widget.keyboardType ?? TextInputType.text,
-        // validator: widget.validator ?? (value) => null,
-        decoration: InputDecoration(
-          hintText: widget.label ?? "",
-          prefixIcon: Icon(
-            widget.prefixIcon,
-            size: 28,
+    return TextFormField(
+      controller: widget.controller,
+      style: const TextStyle(fontSize: 18),
+      focusNode: widget.focusNode ?? FocusNode(),
+      onFieldSubmitted:
+          widget.onFieldSubmitted ?? (value) => widget.focusNode?.nextFocus(),
+      textInputAction: widget.textInputAction ?? TextInputAction.next,
+      keyboardType: widget.keyboardType ?? TextInputType.text,
+      validator: widget.validator ?? (value) => null,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      decoration: InputDecoration(
+        hintText: widget.label ?? "",
+        errorMaxLines: 1,
+        focusedErrorBorder: InputBorder.none,
+        prefixIcon: Icon(
+          widget.prefixIcon,
+          size: 28,
+          color: AppColors.primaryColor,
+        ),
+        suffixIcon: Icon(
+          widget.suffixIcon,
+          size: 28,
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            color: AppColors.dangerColor,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
             color: AppColors.primaryColor,
           ),
-          errorBorder: InputBorder.none,
-          suffixIcon: Icon(
-            widget.suffixIcon,
-            size: 28,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            color: AppColors.primaryColor,
+            width: 3,
           ),
-          border: InputBorder.none,
         ),
       ),
     );
