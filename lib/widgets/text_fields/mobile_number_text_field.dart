@@ -8,9 +8,11 @@ class MobileNumberTextField extends StatefulWidget {
   const MobileNumberTextField({
     Key? key,
     required this.controller,
+    this.enabled,
   }) : super(key: key);
 
   final TextEditingController controller;
+  final bool? enabled;
 
   @override
   State<MobileNumberTextField> createState() => _MobileNumberTextFieldState();
@@ -48,6 +50,7 @@ class _MobileNumberTextFieldState extends State<MobileNumberTextField> {
           prefixIcon: CountryCodePicker(
             initialSelection: 'SA',
             showCountryOnly: true,
+            enabled: widget.enabled ?? true,
             padding: const EdgeInsets.symmetric(horizontal: 8),
             showOnlyCountryWhenClosed: true,
             alignLeft: false,

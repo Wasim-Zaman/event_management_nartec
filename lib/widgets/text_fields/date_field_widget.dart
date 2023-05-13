@@ -11,11 +11,13 @@ class DateFieldWidget extends StatefulWidget {
     required this.controller,
     this.focusNode,
     this.prefixIcon,
+    this.readOnly,
   }) : super(key: key);
 
   final TextEditingController controller;
   final FocusNode? focusNode;
   final IconData? prefixIcon;
+  final bool? readOnly;
 
   @override
   State<DateFieldWidget> createState() => _DateFieldWidgetState();
@@ -33,6 +35,7 @@ class _DateFieldWidgetState extends State<DateFieldWidget> {
       child: TextFormField(
         controller: widget.controller,
         style: AppTextStyle.textFieldLabel,
+        readOnly: widget.readOnly ?? false,
         focusNode: widget.focusNode ?? FocusNode(),
         onFieldSubmitted: (value) => widget.focusNode?.nextFocus(),
         decoration: InputDecoration(

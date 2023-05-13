@@ -19,7 +19,8 @@ class AppTheme {
         size: 24.sp,
       ),
     ),
-    colorScheme: ColorScheme.fromSwatch()
-        .copyWith(secondary: AppColors.primaryColor.withOpacity(0.8)),
+    colorScheme: ColorScheme.fromSwatch().copyWith(
+      secondary: AppColors.primaryColor.withOpacity(0.8),
+    ),
   );
 }

@@ -19,24 +19,25 @@ class ProfileModel {
   String? _email;
   String? _password;
 
-  ProfileModel(
-      {int? memberID,
-      String? firstName,
-      String? lastName,
-      String? streetAddress,
-      String? barangay,
-      String? province,
-      String? city,
-      String? clubName,
-      String? clubRegion,
-      String? clubPresident,
-      String? nationalPresident,
-      String? date,
-      String? peID,
-      String? clubSecretryName,
-      int? clubSecretryNO,
-      String? email,
-      String? password}) {
+  ProfileModel({
+    int? memberID,
+    String? firstName,
+    String? lastName,
+    String? streetAddress,
+    String? barangay,
+    String? province,
+    String? city,
+    String? clubName,
+    String? clubRegion,
+    String? clubPresident,
+    String? nationalPresident,
+    String? date,
+    String? peID,
+    String? clubSecretryName,
+    int? clubSecretryNO,
+    String? email,
+    String? password,
+  }) {
     if (memberID != null) {
       _memberID = memberID;
     }
