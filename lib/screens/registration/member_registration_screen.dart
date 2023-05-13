@@ -1,5 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api, non_constant_identifier_names
 
+import 'package:event_management/constants/app_colors.dart';
 import 'package:event_management/controllers/registration/registration_controller.dart';
 import 'package:event_management/utils/snackbars/app_snackbars.dart';
 import 'package:event_management/widgets/buttons/primary_button_widget.dart';
@@ -24,7 +25,6 @@ class MemberRegistrationScreen extends StatefulWidget {
 class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
     with SingleTickerProviderStateMixin {
   bool screenLoaded = false;
-  bool isSubmit = false;
 
   late TabController _tabController;
 
@@ -33,7 +33,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController streetController = TextEditingController();
+  final TextEditingController streetAddressController = TextEditingController();
 
   final TextEditingController clubNameController = TextEditingController();
   final TextEditingController clubPresidentController = TextEditingController();
@@ -47,7 +47,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
   final FocusNode lastNameNode = FocusNode();
   final FocusNode emailNode = FocusNode();
   final FocusNode passwordNode = FocusNode();
-  final FocusNode streetNode = FocusNode();
+  final FocusNode streetAddressNode = FocusNode();
   final FocusNode clubPresidentNode = FocusNode();
   final FocusNode nationalPresidentNode = FocusNode();
   final FocusNode clubSecretaryNode = FocusNode();
@@ -98,7 +98,11 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 2);
+    _tabController = TabController(
+      vsync: this,
+      length: 2,
+      initialIndex: 0,
+    );
   }
 
   @override
@@ -108,40 +112,42 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
       [
         // Api calls
         RegistrationController.getAllCities().then((response) {
-          setState(() {
-            citiesList = response.map((city) {
-              return city.citiyname.toString();
-            }).toList();
-            selectedCity = citiesList.first;
+          Future.delayed(Duration.zero, () {
+            setState(() {
+              citiesList = response.map((city) {
+                return city.citiyname.toString();
+              }).toList();
+              selectedCity = citiesList.first;
+            });
           });
         }),
         RegistrationController.getAllProvinces().then((response) {
-          setState(() {
-            provinceList = response.map((province) {
-              return province.provincename.toString();
-            }).toList();
-            selectedProvince = provinceList.first;
+          Future.delayed(Duration.zero, () {
+            setState(() {
+              provinceList = response.map((province) {
+                return province.provincename.toString();
+              }).toList();
+              selectedProvince = provinceList.first;
+            });
           });
         }),
       ],
     ).then((_) {
-      setState(() {
-        screenLoaded = true;
+      Future.delayed(const Duration(milliseconds: 500), () {
+        setState(() {
+          screenLoaded = true;
+        });
       });
     });
   }
 
   register() {
-    if (!isSubmit) {
-      isSubmit = true;
-    } else {
-      return;
-    }
-    AppSnackbars.successSnackbar(context, "Please wait...");
     RegistrationController.registerUser({
+      "email": emailController.text,
+      "password": passwordController.text,
       "first_name": firstNameController.text,
       "last_name": lastNameController.text,
-      "street_address": streetController.text,
+      "street_address": streetAddressController.text,
       "barangay": selectedBarangay,
       "province": selectedProvince,
       "city": selectedCity,
@@ -154,13 +160,15 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
       "club_secretry_name": clubSecretaryController.text,
       "club_secretry_NO": mobileNumberController.text,
     }).then((_) {
-      isSubmit = false;
       // AppToasts.successToast("Registration Successful");
       AppSnackbars.successSnackbar(context, "Registration Successful");
       Navigator.pop(context);
     }).onError((error, stackTrace) {
       // AppToasts.errorToast(error.toString());
-      AppSnackbars.errorSnackbar(context, error.toString());
+      AppSnackbars.errorSnackbar(
+        context,
+        error.toString().replaceAll("Exception:", ""),
+      );
     });
   }
 
@@ -169,7 +177,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
     _tabController.dispose();
     firstNameController.dispose();
     lastNameController.dispose();
-    streetController.dispose();
+    streetAddressController.dispose();
     clubNameController.dispose();
     clubPresidentController.dispose();
     nationalPresidentController.dispose();
@@ -179,12 +187,10 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
     lastNameNode.dispose();
     emailNode.dispose();
     passwordNode.dispose();
-    streetNode.dispose();
+    streetAddressNode.dispose();
     clubPresidentNode.dispose();
     nationalPresidentNode.dispose();
     clubSecretaryNode.dispose();
-
-    _tabController.dispose();
     super.dispose();
   }
 
@@ -195,6 +201,10 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
         title: const Text('Member Registration'),
         bottom: TabBar(
           controller: _tabController,
+          indicator: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: AppColors.successColor,
+          ),
           tabs: [
             Tab(
               text: 'Personal Information'.toUpperCase(),
@@ -230,7 +240,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
               child: Column(
                 children: [
                   const RequiredTextWidget(text: "First Name"),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5.0),
                   TextFieldWidget(
                     controller: firstNameController,
                     label: "Enter Your First Name",
@@ -239,9 +249,9 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                       FocusScope.of(context).requestFocus(lastNameNode);
                     },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10.0),
                   const RequiredTextWidget(text: "Last Name"),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5.0),
                   TextFieldWidget(
                     controller: lastNameController,
                     label: "Enter Your Last Name",
@@ -251,11 +261,12 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                       FocusScope.of(context).requestFocus(emailNode);
                     },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10.0),
                   const RequiredTextWidget(text: "Email"),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5.0),
                   TextFieldWidget(
                     controller: emailController,
+                    focusNode: emailNode,
                     prefixIcon: Ionicons.mail_outline,
                     label: "Enter Your Email",
                     onFieldSubmitted: (p0) {
@@ -268,30 +279,38 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                       return null;
                     },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10.0),
                   const RequiredTextWidget(text: "Password"),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5.0),
                   PasswordTextFieldWidget(
                     controller: passwordController,
                     prefixIcon: Ionicons.lock_closed_outline,
                     label: "Enter Your Password",
+                    focusNode: passwordNode,
+                    textInputAction: TextInputAction.next,
                     onFieldSubmitted: (p0) {
-                      FocusScope.of(context).requestFocus(streetNode);
+                      FocusScope.of(context).requestFocus(streetAddressNode);
                     },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10.0),
                   const RequiredTextWidget(text: "Street Address"),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5.0),
                   TextFieldWidget(
-                    controller: streetController,
-                    label: "Select Your Street Address",
-                    prefixIcon: Ionicons.home_outline,
-                    focusNode: streetNode,
-                    textInputAction: TextInputAction.done,
+                    controller: streetAddressController,
+                    focusNode: streetAddressNode,
+                    prefixIcon: Ionicons.location_outline,
+                    label: "Enter Your Street Address",
+                    onFieldSubmitted: (p0) {},
+                    validator: (p0) {
+                      if (p0!.isEmpty) {
+                        return "This field is required";
+                      }
+                      return null;
+                    },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10.0),
                   const RequiredTextWidget(text: "Province"),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5.0),
                   // province dropdown
                   DropdownWidget(
                     stringList: provinceList,
@@ -302,9 +321,9 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                       });
                     },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10.0),
                   const RequiredTextWidget(text: "City"),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5.0),
                   // city dropdown
                   DropdownWidget(
                     stringList: citiesList,
@@ -315,9 +334,9 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                       });
                     },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10.0),
                   const RequiredTextWidget(text: "Barangay"),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5.0),
                   // barangay dropdown
                   DropdownWidget(
                     stringList: barangayList,
@@ -328,13 +347,13 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                       });
                     },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 20.0),
                   PrimaryButtonWidget(
                     caption: "Next",
                     onPressed: () {
                       if (firstNameController.text.isEmpty ||
                           lastNameController.text.isEmpty ||
-                          streetController.text.isEmpty) {
+                          streetAddressController.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text("Please fill all required fields"),
@@ -364,14 +383,14 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
               child: Column(
                 children: [
                   const RequiredTextWidget(text: "Club Name"),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5.0),
                   TextFieldWidget(
                     controller: clubNameController,
                     label: "Enter Your Club Name",
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10.0),
                   const RequiredTextWidget(text: "Club Region"),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5.0),
                   // club region dropdown
                   DropdownWidget(
                     stringList: clubRegionsList,
@@ -382,30 +401,30 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                       });
                     },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10.0),
                   const RequiredTextWidget(text: "Club President"),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5.0),
                   TextFieldWidget(
                     controller: clubPresidentController,
-                    label: "Enter Your Club President",
+                    label: "Enter your Club President",
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10.0),
                   const RequiredTextWidget(text: "National President"),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5.0),
                   TextFieldWidget(
                     controller: nationalPresidentController,
                     label: "Enter Your National President",
-                    focusNode: streetNode,
+                    focusNode: streetAddressNode,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10.0),
                   const RequiredTextWidget(text: "Date Joined"),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5.0),
                   // date widget
                   DateFieldWidget(controller: dateController),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10.0),
                   const RequiredTextWidget(
                       text: "Do You Already Have TFOE-PE ID?"),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5.0),
                   // yes no dropdown
                   DropdownWidget(
                     stringList: yesNoList,
@@ -416,21 +435,21 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                       });
                     },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10.0),
                   const RequiredTextWidget(text: "Club Secretary Name"),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5.0),
                   TextFieldWidget(
-                    controller: streetController,
+                    controller: clubSecretaryController,
                     label: "Select Your Club Secretary Name",
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10.0),
                   const RequiredTextWidget(
                       text: "Club Secretary Contact Number"),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5.0),
                   MobileNumberTextField(
                     controller: mobileNumberController,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10.0),
                   PrimaryButtonWidget(
                     caption: "Submit",
                     onPressed: () {

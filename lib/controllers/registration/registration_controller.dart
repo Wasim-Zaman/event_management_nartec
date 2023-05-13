@@ -49,6 +49,8 @@ class RegistrationController {
   static Future<void> registerUser(Map<String, String> data) async {
     try {
       final body = {
+        "email": data['email'],
+        "password": data['password'],
         "first_name": data['first_name'],
         "last_name": data['last_name'],
         "street_address": data['street_address'],
@@ -64,11 +66,14 @@ class RegistrationController {
         "club_secretry_name": data['club_secretry_name'],
         "club_secretry_NO": data['club_secretry_NO'],
       };
-      var response =
-          await _apiManager.postRequest(body, "${URL.baseUrl}tblPostMembers");
+      var response = await _apiManager.postRequest(
+        body,
+        "${URL.baseUrl}tblPostMembers",
+      );
       if (response != null && response.statusCode == 200) {
         print("User registered successfully");
       } else {
+        print("status code: ${response.statusCode}");
         throw Exception('An error occurred while registering user!');
       }
     } catch (error) {

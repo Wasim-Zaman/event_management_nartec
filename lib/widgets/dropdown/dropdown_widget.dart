@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:event_management/constants/app_colors.dart';
+import 'package:event_management/constants/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -25,15 +26,11 @@ class _DropdownWidgetState extends State<DropdownWidget> {
   Widget build(BuildContext context) {
     return Container(
       width: context.width(),
-      height: context.height() * 0.07,
+      height: context.height() / 17,
       padding: const EdgeInsets.only(left: 50, right: 10),
       decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(10),
-        ),
-        border: Border.all(
-          color: AppColors.primaryColor,
-        ),
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        color: AppColors.appGreyColor,
         // color: AppColors.appGreyColor,
       ),
       child: DropdownButton<String>(
@@ -49,7 +46,7 @@ class _DropdownWidgetState extends State<DropdownWidget> {
             : widget.stringList.map((String string) {
                 return DropdownMenuItem<String>(
                   value: string,
-                  child: Text(string, style: const TextStyle(fontSize: 16)),
+                  child: Text(string, style: AppTextStyle.textFieldLabel),
                 );
               }).toList(),
         onChanged: widget.onChanged ?? (_) {},

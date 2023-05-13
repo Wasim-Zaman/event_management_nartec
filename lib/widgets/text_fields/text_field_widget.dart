@@ -1,4 +1,5 @@
 import 'package:event_management/constants/app_colors.dart';
+import 'package:event_management/constants/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
@@ -31,49 +32,57 @@ class TextFieldWidget extends StatefulWidget {
 class _TextFieldWidgetState extends State<TextFieldWidget> {
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: widget.controller,
-      style: const TextStyle(fontSize: 18),
-      focusNode: widget.focusNode ?? FocusNode(),
-      onFieldSubmitted:
-          widget.onFieldSubmitted ?? (value) => widget.focusNode?.nextFocus(),
-      textInputAction: widget.textInputAction ?? TextInputAction.next,
-      keyboardType: widget.keyboardType ?? TextInputType.text,
-      validator: widget.validator ?? (value) => null,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      decoration: InputDecoration(
-        hintText: widget.label ?? "",
-        hintStyle: const TextStyle(fontSize: 16),
-        labelStyle: const TextStyle(fontSize: 16),
-        errorMaxLines: 1,
-        focusedErrorBorder: InputBorder.none,
-        prefixIcon: Icon(
-          widget.prefixIcon,
-          size: 28,
-          color: AppColors.primaryColor,
-        ),
-        suffixIcon: Icon(
-          widget.suffixIcon,
-          size: 28,
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(
-            color: AppColors.dangerColor,
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(
+    return Container(
+      height: context.height() / 17,
+      decoration: BoxDecoration(
+        color: AppColors.appGreyColor,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: TextFormField(
+        controller: widget.controller,
+        style: AppTextStyle.textFieldLabel,
+        focusNode: widget.focusNode ?? FocusNode(),
+        onFieldSubmitted:
+            widget.onFieldSubmitted ?? (value) => widget.focusNode?.nextFocus(),
+        textInputAction: widget.textInputAction ?? TextInputAction.next,
+        keyboardType: widget.keyboardType ?? TextInputType.text,
+        // validator: widget.validator ?? (value) => null,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        decoration: InputDecoration(
+          hintText: widget.label ?? "",
+          hintStyle: AppTextStyle.textFieldLabel,
+          labelStyle: AppTextStyle.textFieldLabel,
+          errorMaxLines: 1,
+          focusedErrorBorder: InputBorder.none,
+          prefixIcon: Icon(
+            widget.prefixIcon,
+            size: 20,
             color: AppColors.primaryColor,
           ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(
-            color: AppColors.primaryColor,
-            width: 3,
+          suffixIcon: Icon(
+            widget.suffixIcon,
+            size: 20,
           ),
+          border: InputBorder.none,
+          // errorBorder: OutlineInputBorder(
+          //   borderRadius: BorderRadius.circular(10),
+          //   borderSide: BorderSide(
+          //     color: AppColors.dangerColor,
+          //   ),
+          // ),
+          // enabledBorder: OutlineInputBorder(
+          //   borderRadius: BorderRadius.circular(10),
+          //   borderSide: BorderSide(
+          //     color: AppColors.primaryColor,
+          //   ),
+          // ),
+          // focusedBorder: OutlineInputBorder(
+          //   borderRadius: BorderRadius.circular(10),
+          //   borderSide: BorderSide(
+          //     color: AppColors.primaryColor,
+          //     width: 2,
+          //   ),
+          // ),
         ),
       ),
     );
