@@ -4,7 +4,7 @@
     <!-- access internet -->
     <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="event_management"
+        android:label="Event Management"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
