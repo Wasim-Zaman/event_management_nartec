@@ -3,12 +3,14 @@
 import 'package:event_management/constants/app_colors.dart';
 import 'package:event_management/controllers/profile/profile_controller.dart';
 import 'package:event_management/models/profile/profile_model.dart';
+import 'package:event_management/providers/profile/member_profile.dart';
 import 'package:event_management/utils/snackbars/app_snackbars.dart';
 import 'package:event_management/widgets/loading_widget/app_loading_widget.dart';
 import 'package:event_management/widgets/text/container_text_widget.dart';
 import 'package:event_management/widgets/text/heading_text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:provider/provider.dart';
 
 class MemberProfileScreen extends StatefulWidget {
   const MemberProfileScreen({super.key});
@@ -33,11 +35,13 @@ class _MemberProfileScreenState extends State<MemberProfileScreen>
   void initState() {
     super.initState();
 
-    // Get email and password from previous screen
-    final Map<String, dynamic> arguments =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    email = arguments["email"];
-    password = arguments["password"];
+    // Get email and password from provider
+    email = context.read<MemberProfile>().email;
+    password = context.read<MemberProfile>().password;
+
+    // clear the provider
+    context.read<MemberProfile>().reset();
+
     // Api calls
     ProfileController.getMember(email, password).then((model) {
       setState(() {

@@ -2,6 +2,7 @@ import 'package:event_management/constants/api_manager.dart';
 import 'package:event_management/constants/app_colors.dart';
 import 'package:event_management/constants/app_text_style.dart';
 import 'package:event_management/constants/url.dart';
+import 'package:event_management/providers/profile/member_profile.dart';
 import 'package:event_management/screens/profile/member_profile_screen.dart';
 import 'package:event_management/screens/registration/member_registration_screen.dart';
 import 'package:event_management/widgets/buttons/primary_button_widget.dart';
@@ -11,6 +12,7 @@ import 'package:event_management/widgets/text_fields/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:provider/provider.dart';
 
 class MemberLoginScreen extends StatefulWidget {
   const MemberLoginScreen({super.key});
@@ -43,15 +45,14 @@ class _MemberLoginScreenState extends State<MemberLoginScreen> {
 
       response.then((value) {
         if (value.statusCode == 200) {
-          Navigator.of(context).push(
+          // Save email and password in provider
+          context.read<MemberProfile>().setEmail(emailController.text);
+          context.read<MemberProfile>().setPassword(passwordController.text);
+          // Navigate to profile screen
+          Navigator.push(
+            context,
             MaterialPageRoute(
-              builder: (context) {
-                return const MemberProfileScreen();
-              },
-              settings: RouteSettings(arguments: {
-                "email": emailController.text,
-                "password": passwordController.text,
-              }),
+              builder: (context) => const MemberProfileScreen(),
             ),
           );
         } else {
