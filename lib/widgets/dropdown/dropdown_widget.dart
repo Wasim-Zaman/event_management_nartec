@@ -1,4 +1,5 @@
-import 'package:auto_size_text/auto_size_text.dart';
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:event_management/constants/app_colors.dart';
 import 'package:event_management/constants/app_text_style.dart';
 import 'package:flutter/material.dart';

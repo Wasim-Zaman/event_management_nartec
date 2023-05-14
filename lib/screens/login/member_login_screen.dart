@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:event_management/constants/api_manager.dart';
 import 'package:event_management/constants/app_colors.dart';
 import 'package:event_management/constants/app_text_style.dart';
@@ -35,12 +37,13 @@ class _MemberLoginScreenState extends State<MemberLoginScreen> {
       );
       isPressed = false;
     } else {
-      final response = ApiManager().postRequest(
+      final response = ApiManager.postRequest(
         {
           "email": emailController.text,
           "password": passwordController.text,
         },
         "${URL.baseUrl}UserLoginAuth",
+        headers: {"Content-Type": "application/json"},
       );
 
       response.then((value) {
@@ -48,6 +51,7 @@ class _MemberLoginScreenState extends State<MemberLoginScreen> {
           // Save email and password in provider
           context.read<MemberProfile>().setEmail(emailController.text);
           context.read<MemberProfile>().setPassword(passwordController.text);
+
           // Navigate to profile screen
           Navigator.push(
             context,
@@ -57,7 +61,7 @@ class _MemberLoginScreenState extends State<MemberLoginScreen> {
           );
         } else {
           Fluttertoast.showToast(
-            msg: "Invalid credentials",
+            msg: jsonDecode(value.body)["message"],
             backgroundColor: AppColors.dangerColor,
           );
         }
@@ -78,7 +82,7 @@ class _MemberLoginScreenState extends State<MemberLoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Member Login'),
+        title: const Text('Login'),
       ),
       body: SafeArea(
         child: Padding(

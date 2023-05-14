@@ -16,7 +16,7 @@ class AppSnackbars {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     return ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(message.replaceAll("Exception:", "")),
         backgroundColor: AppColors.dangerColor,
       ),
     );

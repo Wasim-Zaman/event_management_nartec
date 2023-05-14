@@ -1,4 +1,3 @@
-import 'package:event_management/constants/app_colors.dart';
 import 'package:event_management/constants/app_text_style.dart';
 import 'package:flutter/material.dart';
 

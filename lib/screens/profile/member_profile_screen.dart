@@ -4,11 +4,13 @@ import 'package:event_management/constants/app_colors.dart';
 import 'package:event_management/controllers/profile/profile_controller.dart';
 import 'package:event_management/models/profile/profile_model.dart';
 import 'package:event_management/providers/profile/member_profile.dart';
+import 'package:event_management/screens/profile/components/app_drawer.dart';
 import 'package:event_management/utils/snackbars/app_snackbars.dart';
 import 'package:event_management/widgets/loading_widget/app_loading_widget.dart';
 import 'package:event_management/widgets/text/container_text_widget.dart';
 import 'package:event_management/widgets/text/heading_text_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_exit_app/flutter_exit_app.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:provider/provider.dart';
 
@@ -21,6 +23,9 @@ class MemberProfileScreen extends StatefulWidget {
 
 class _MemberProfileScreenState extends State<MemberProfileScreen>
     with SingleTickerProviderStateMixin {
+  // scaffold key
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   bool screenLoaded = false;
 
   late TabController tabController = TabController(
@@ -39,9 +44,6 @@ class _MemberProfileScreenState extends State<MemberProfileScreen>
     email = context.read<MemberProfile>().email;
     password = context.read<MemberProfile>().password;
 
-    // clear the provider
-    context.read<MemberProfile>().reset();
-
     // Api calls
     ProfileController.getMember(email, password).then((model) {
       setState(() {
@@ -51,7 +53,7 @@ class _MemberProfileScreenState extends State<MemberProfileScreen>
     }).onError((error, stackTrace) {
       AppSnackbars.errorSnackbar(
         context,
-        error.toString().replaceAll("Exception:", ""),
+        error.toString(),
       );
     });
   }
@@ -59,47 +61,80 @@ class _MemberProfileScreenState extends State<MemberProfileScreen>
   @override
   void dispose() {
     tabController.dispose();
+    _scaffoldKey.currentState?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Member Registration'),
-        leading: IconButton(
-          icon: const Icon(Ionicons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        bottom: TabBar(
-          controller: tabController,
-          indicator: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: AppColors.successColor,
-          ),
-          tabs: [
-            Tab(
-              text: 'Personal Information'.toUpperCase(),
-            ),
-            Tab(
-              text: 'tfoe-pe details'.toUpperCase(),
-            ),
-          ],
-        ),
-      ),
-      body: TabBarView(
-        controller: tabController,
-        children: !screenLoaded
-            ? [
-                const AppLoadingWidget(),
-                const SizedBox.shrink(),
-              ]
-            : [
-                personalInformation(),
-                toePeDetails(),
+    return WillPopScope(
+      onWillPop: () async {
+        // do you really want to exit the app? when tab index is 0
+        if (tabController.index == 0) {
+          // display dialog to exit app
+          await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Exit App'),
+              content: const Text('Do you really want to exit the app?'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('No'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    // exit the app
+
+                    Navigator.of(context).pop();
+                    FlutterExitApp.exitApp();
+                  },
+                  child: const Text('Yes'),
+                ),
               ],
+            ),
+          );
+          return true;
+        } else {
+          tabController.animateTo(0);
+          return false;
+        }
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          title: const Text('Profile'),
+          bottom: TabBar(
+            controller: tabController,
+            indicator: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: AppColors.successColor,
+            ),
+            tabs: [
+              Tab(
+                text: 'Personal Information'.toUpperCase(),
+              ),
+              Tab(
+                text: 'tfoe-pe details'.toUpperCase(),
+              ),
+            ],
+          ),
+        ),
+        drawer: const AppDrawer(),
+        body: TabBarView(
+          controller: tabController,
+          children: !screenLoaded
+              ? [
+                  const AppLoadingWidget(),
+                  const SizedBox.shrink(),
+                ]
+              : [
+                  personalInformation(),
+                  toePeDetails(),
+                ],
+        ),
       ),
     );
   }

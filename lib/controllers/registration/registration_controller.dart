@@ -6,13 +6,12 @@ import 'package:event_management/models/registration/cities.dart';
 import 'package:event_management/models/registration/provinces.dart';
 
 class RegistrationController {
-  static final ApiManager _apiManager = ApiManager();
   static Future<List<Cities>> getAllCities() async {
     List<Cities> cities = [];
     try {
       var response =
-          await _apiManager.getRequest("${URL.baseUrl}ListOfDropDownCities");
-      if (response != null && response.statusCode == 200) {
+          await ApiManager.getRequest("${URL.baseUrl}ListOfDropDownCities");
+      if (response.statusCode == 200) {
         var data = json.decode(response.body) as Map;
         final List<dynamic> citiesList = data['recordsets'][0];
         cities = citiesList.map((city) => Cities.fromJson(city)).toList();
@@ -29,14 +28,13 @@ class RegistrationController {
     List<Provinces> provinces = [];
     try {
       var response =
-          await _apiManager.getRequest("${URL.baseUrl}ListOfDropDownProvince");
-      if (response != null && response.statusCode == 200) {
+          await ApiManager.getRequest("${URL.baseUrl}ListOfDropDownProvince");
+      if (response.statusCode == 200) {
         var data = json.decode(response.body) as Map;
         final List<dynamic> provincesList = data['recordsets'][0];
         provinces = provincesList.map((province) {
           return Provinces.fromJson(province);
         }).toList();
-        print("Provinces got successfully");
       } else {
         throw Exception('Failed to load data!');
       }
@@ -66,14 +64,12 @@ class RegistrationController {
         "club_secretry_name": data['club_secretry_name'],
         "club_secretry_NO": data['club_secretry_NO'],
       };
-      var response = await _apiManager.postRequest(
+      var response = await ApiManager.postRequest(
         body,
         "${URL.baseUrl}tblPostMembers",
       );
-      if (response != null && response.statusCode == 200) {
-        print("User registered successfully");
+      if (response.statusCode == 200) {
       } else {
-        print("status code: ${response.statusCode}");
         throw Exception('An error occurred while registering user!');
       }
     } catch (error) {

@@ -1,6 +1,5 @@
 import 'package:event_management/constants/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 class ContainerTextWidget extends StatelessWidget {

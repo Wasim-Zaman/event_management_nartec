@@ -14,7 +14,6 @@ class PasswordTextFieldWidget extends StatefulWidget {
     this.keyboardType,
     this.validator,
     this.onFieldSubmitted,
-    this.readOnly,
   }) : super(key: key);
 
   final TextEditingController controller;
@@ -25,7 +24,6 @@ class PasswordTextFieldWidget extends StatefulWidget {
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
   final Function(String)? onFieldSubmitted;
-  final bool? readOnly;
 
   @override
   State<PasswordTextFieldWidget> createState() =>
@@ -46,7 +44,6 @@ class _PasswordTextFieldWidgetState extends State<PasswordTextFieldWidget> {
       child: TextFormField(
         controller: widget.controller,
         focusNode: widget.focusNode ?? FocusNode(),
-        readOnly: widget.readOnly ?? false,
         style: AppTextStyle.textFieldLabel,
         obscureText: obscureText,
         onFieldSubmitted: widget.onFieldSubmitted ??

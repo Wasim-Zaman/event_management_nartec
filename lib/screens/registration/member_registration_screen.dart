@@ -341,7 +341,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                     onPressed: () {
                       if (firstNameController.text.isEmpty ||
                           lastNameController.text.isEmpty ||
-                          streetAddressController.text.isEmpty) {
+                          streetController.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text("Please fill all required fields"),

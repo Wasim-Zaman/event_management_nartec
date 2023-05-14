@@ -48,6 +48,7 @@ dependencies:
   flutter_bloc: ^8.1.2
   loading_animation_widget: ^1.2.0+4
   provider: ^6.0.5
+  flutter_exit_app: ^1.1.2
 
 dev_dependencies:
   flutter_test:
