@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, non_constant_identifier_names
+// ignore_for_file: library_private_types_in_public_api
 
 import 'package:event_management/constants/app_colors.dart';
 import 'package:event_management/controllers/profile/profile_controller.dart';
