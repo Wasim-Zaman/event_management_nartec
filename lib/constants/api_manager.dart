@@ -24,8 +24,13 @@ class ApiManager {
 
   static Future<Response> postRequest(var body, var url,
       {dynamic headers}) async {
-    return await post(Uri.parse(url), body: jsonEncode(body), headers: headers ?? {
-      'Content-type': 'application/json',
-    });
+    return await post(
+      Uri.parse(url),
+      body: jsonEncode(body),
+      headers: headers ??
+          {
+            'Content-type': 'application/json',
+          },
+    );
   }
 }

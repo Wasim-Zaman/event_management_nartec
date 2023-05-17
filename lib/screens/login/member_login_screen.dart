@@ -1,11 +1,5 @@
-import 'dart:convert';
-
-import 'package:event_management/constants/api_manager.dart';
-import 'package:event_management/constants/app_colors.dart';
 import 'package:event_management/constants/app_text_style.dart';
-import 'package:event_management/constants/url.dart';
-import 'package:event_management/providers/profile/member_profile.dart';
-import 'package:event_management/screens/profile/member_profile_screen.dart';
+import 'package:event_management/controllers/login/login_controller.dart';
 import 'package:event_management/screens/registration/member_registration_screen.dart';
 import 'package:event_management/widgets/buttons/primary_button_widget.dart';
 import 'package:event_management/widgets/buttons/secondary_button_widget.dart';
@@ -14,7 +8,6 @@ import 'package:event_management/widgets/text_fields/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:provider/provider.dart';
 
 class MemberLoginScreen extends StatefulWidget {
   const MemberLoginScreen({super.key});
@@ -27,47 +20,54 @@ class _MemberLoginScreenState extends State<MemberLoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  bool isPressed = false;
-
   login() {
-    isPressed = true;
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       Fluttertoast.showToast(
         msg: "Please fill all the fields",
       );
-      isPressed = false;
     } else {
-      final response = ApiManager.postRequest(
-        {
-          "email": emailController.text,
-          "password": passwordController.text,
-        },
-        "${URL.baseUrl}UserLoginAuth",
-        headers: {"Content-Type": "application/json"},
+      // try {
+      //   final response = ApiManager.postRequest(
+      //       {
+      //         "email": emailController.text,
+      //         "password": passwordController.text,
+      //       },
+      //       "${URL.baseUrl}UserLoginAuth",
+      //       headers: {
+      //         'Content-type': 'application/json',
+      //       });
+
+      //   response.then((value) {
+      //     print("status code: ${value.statusCode}");
+      //     if (value.statusCode == 200) {
+      //       // Save email and password in provider
+      //       context.read<MemberProfile>().setEmail(emailController.text);
+      //       context.read<MemberProfile>().setPassword(passwordController.text);
+
+      //       // Navigate to profile screen
+      //       Navigator.push(
+      //         context,
+      //         MaterialPageRoute(
+      //           builder: (context) => const MemberProfileScreen(),
+      //         ),
+      //       );
+      //     } else {
+      //       Fluttertoast.showToast(
+      //         msg: jsonDecode(value.body)["message"],
+      //         backgroundColor: AppColors.dangerColor,
+      //       );
+      //     }
+      //   });
+      // } catch (error) {
+      //   Fluttertoast.showToast(
+      //     msg: error.toString(),
+      //   );
+      // }
+      LoginController.login(
+        context,
+        emailController.text,
+        passwordController.text,
       );
-
-      response.then((value) {
-        if (value.statusCode == 200) {
-          // Save email and password in provider
-          context.read<MemberProfile>().setEmail(emailController.text);
-          context.read<MemberProfile>().setPassword(passwordController.text);
-
-          // Navigate to profile screen
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const MemberProfileScreen(),
-            ),
-          );
-        } else {
-          Fluttertoast.showToast(
-            msg: jsonDecode(value.body)["message"],
-            backgroundColor: AppColors.dangerColor,
-          );
-        }
-      });
-
-      isPressed = false;
     }
   }
 

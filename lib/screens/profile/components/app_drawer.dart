@@ -1,5 +1,7 @@
 import 'package:event_management/constants/app_colors.dart';
 import 'package:event_management/providers/profile/member_profile.dart';
+import 'package:event_management/screens/Event/current_event_screen.dart';
+import 'package:event_management/screens/login/member_login_screen.dart';
 import 'package:event_management/screens/profile/member_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
@@ -57,6 +59,12 @@ class AppDrawer extends StatelessWidget {
               icon: Ionicons.calendar_outline,
               onTap: () {
                 Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CurrentEventScreen(),
+                  ),
+                );
               },
             ),
             DrawerItem(
@@ -71,6 +79,20 @@ class AppDrawer extends StatelessWidget {
               icon: Ionicons.people_outline,
               onTap: () {
                 Navigator.pop(context);
+              },
+            ),
+            DrawerItem(
+              title: 'Logout',
+              icon: Ionicons.log_out_outline,
+              onTap: () {
+                Navigator.pop(context);
+                context.read<MemberProfile>().reset();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MemberLoginScreen(),
+                  ),
+                );
               },
             ),
           ],

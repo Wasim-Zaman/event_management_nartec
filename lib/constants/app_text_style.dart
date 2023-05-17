@@ -21,4 +21,10 @@ class AppTextStyle {
   );
 
   static var textFieldLabel = const TextStyle(fontSize: 16);
+
+  static var tableHeader = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+    color: AppColors.appTextColorPrimary,
+  );
 }
