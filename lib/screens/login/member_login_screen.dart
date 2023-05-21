@@ -1,10 +1,10 @@
-import 'package:event_management/constants/app_text_style.dart';
+import 'package:event_management/common/constants/app_text_style.dart';
+import 'package:event_management/common/widgets/buttons/primary_button_widget.dart';
+import 'package:event_management/common/widgets/buttons/secondary_button_widget.dart';
+import 'package:event_management/common/widgets/text_fields/password_text_field_widget.dart';
+import 'package:event_management/common/widgets/text_fields/text_field_widget.dart';
 import 'package:event_management/controllers/login/login_controller.dart';
 import 'package:event_management/screens/registration/member_registration_screen.dart';
-import 'package:event_management/widgets/buttons/primary_button_widget.dart';
-import 'package:event_management/widgets/buttons/secondary_button_widget.dart';
-import 'package:event_management/widgets/text_fields/password_text_field_widget.dart';
-import 'package:event_management/widgets/text_fields/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ionicons/ionicons.dart';
@@ -26,43 +26,6 @@ class _MemberLoginScreenState extends State<MemberLoginScreen> {
         msg: "Please fill all the fields",
       );
     } else {
-      // try {
-      //   final response = ApiManager.postRequest(
-      //       {
-      //         "email": emailController.text,
-      //         "password": passwordController.text,
-      //       },
-      //       "${URL.baseUrl}UserLoginAuth",
-      //       headers: {
-      //         'Content-type': 'application/json',
-      //       });
-
-      //   response.then((value) {
-      //     print("status code: ${value.statusCode}");
-      //     if (value.statusCode == 200) {
-      //       // Save email and password in provider
-      //       context.read<MemberProfile>().setEmail(emailController.text);
-      //       context.read<MemberProfile>().setPassword(passwordController.text);
-
-      //       // Navigate to profile screen
-      //       Navigator.push(
-      //         context,
-      //         MaterialPageRoute(
-      //           builder: (context) => const MemberProfileScreen(),
-      //         ),
-      //       );
-      //     } else {
-      //       Fluttertoast.showToast(
-      //         msg: jsonDecode(value.body)["message"],
-      //         backgroundColor: AppColors.dangerColor,
-      //       );
-      //     }
-      //   });
-      // } catch (error) {
-      //   Fluttertoast.showToast(
-      //     msg: error.toString(),
-      //   );
-      // }
       LoginController.login(
         context,
         emailController.text,

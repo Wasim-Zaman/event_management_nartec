@@ -1,4 +1,4 @@
-import 'package:event_management/constants/app_colors.dart';
+import 'package:event_management/common/constants/app_colors.dart';
 import 'package:event_management/providers/profile/member_profile.dart';
 import 'package:event_management/screens/Event/current_event_screen.dart';
 import 'package:event_management/screens/login/member_login_screen.dart';

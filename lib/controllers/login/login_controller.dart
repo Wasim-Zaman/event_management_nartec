@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:event_management/constants/api_manager.dart';
-import 'package:event_management/constants/app_colors.dart';
-import 'package:event_management/constants/url.dart';
+import 'package:event_management/common/constants/api_manager.dart';
+import 'package:event_management/common/constants/app_colors.dart';
+import 'package:event_management/common/constants/url.dart';
 import 'package:event_management/providers/profile/member_profile.dart';
 import 'package:event_management/screens/profile/member_profile_screen.dart';
 import 'package:flutter/material.dart';

@@ -1,9 +1,9 @@
+import 'package:event_management/common/widgets/loading_widget/app_loading_widget.dart';
+import 'package:event_management/common/widgets/tables/table_scrollable_widget.dart';
+import 'package:event_management/common/widgets/text/table_header_text.dart';
 import 'package:event_management/controllers/events/current_event_controller.dart';
 import 'package:event_management/models/Events/current_event_model.dart';
 import 'package:event_management/screens/profile/components/app_drawer.dart';
-import 'package:event_management/widgets/loading_widget/app_loading_widget.dart';
-import 'package:event_management/widgets/tables/table_scrollable_widget.dart';
-import 'package:event_management/widgets/text/table_header_text.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 

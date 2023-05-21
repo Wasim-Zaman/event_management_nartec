@@ -1,14 +1,14 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:event_management/constants/app_colors.dart';
+import 'package:event_management/common/constants/app_colors.dart';
+import 'package:event_management/common/widgets/loading_widget/app_loading_widget.dart';
+import 'package:event_management/common/widgets/text/container_text_widget.dart';
+import 'package:event_management/common/widgets/text/heading_text_widget.dart';
 import 'package:event_management/controllers/profile/profile_controller.dart';
 import 'package:event_management/models/profile/profile_model.dart';
 import 'package:event_management/providers/profile/member_profile.dart';
 import 'package:event_management/screens/profile/components/app_drawer.dart';
 import 'package:event_management/utils/snackbars/app_snackbars.dart';
-import 'package:event_management/widgets/loading_widget/app_loading_widget.dart';
-import 'package:event_management/widgets/text/container_text_widget.dart';
-import 'package:event_management/widgets/text/heading_text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_exit_app/flutter_exit_app.dart';
 import 'package:ionicons/ionicons.dart';

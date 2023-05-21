@@ -1,4 +1,4 @@
-import 'package:event_management/constants/app_colors.dart';
+import 'package:event_management/common/constants/app_colors.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class AppToasts {
@@ -8,7 +8,7 @@ class AppToasts {
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
         backgroundColor: AppColors.dangerColor,
-        textColor: AppColors.appTextColorSecondary,
+        textColor: AppColors.appWhiteColor,
         fontSize: 16.0,
       );
 

@@ -1,4 +1,5 @@
-import 'package:event_management/constants/app_theme.dart';
+import 'package:event_management/common/constants/app_theme.dart';
+import 'package:event_management/providers/map/google_map_provider.dart';
 import 'package:event_management/providers/profile/member_profile.dart';
 import 'package:event_management/screens/login/member_login_screen.dart';
 import 'package:flutter/material.dart';
@@ -28,8 +29,15 @@ class _MyAppState extends State<MyApp> {
     return ScreenUtilInit(
       designSize: Size(context.width(), context.height()),
       builder: (context, child) {
-        return ChangeNotifierProvider(
-          create: (context) => MemberProfile(),
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (context) => MemberProfile(),
+            ),
+            ChangeNotifierProvider(
+              create: (context) => GoogleMapProvider(),
+            ),
+          ],
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Event Management',

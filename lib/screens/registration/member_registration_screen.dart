@@ -1,18 +1,30 @@
-// ignore_for_file: library_private_types_in_public_api, non_constant_identifier_names
+// ignore_for_file: library_private_types_in_public_api, non_constant_identifier_names, deprecated_member_use
 
-import 'package:event_management/constants/app_colors.dart';
+import 'dart:io';
+
+import 'package:event_management/common/constants/app_colors.dart';
+import 'package:event_management/common/services/image_picker/app_image_picker.dart';
+import 'package:event_management/common/widgets/buttons/primary_button_widget.dart';
+import 'package:event_management/common/widgets/buttons/secondary_button_widget.dart';
+import 'package:event_management/common/widgets/dropdown/dropdown_widget.dart';
+import 'package:event_management/common/widgets/loading_widget/app_loading_widget.dart';
+import 'package:event_management/common/widgets/text/container_text_widget.dart';
+import 'package:event_management/common/widgets/text/required_text_widget.dart';
+import 'package:event_management/common/widgets/text_fields/date_field_widget.dart';
+import 'package:event_management/common/widgets/text_fields/mobile_number_text_field.dart';
+import 'package:event_management/common/widgets/text_fields/password_text_field_widget.dart';
+import 'package:event_management/common/widgets/text_fields/text_field_widget.dart';
+import 'package:event_management/controllers/location/location_controller.dart';
 import 'package:event_management/controllers/registration/registration_controller.dart';
+import 'package:event_management/screens/map/google_map_screen.dart';
+import 'package:event_management/screens/registration/widgets/image/circular_image_widget.dart';
+import 'package:event_management/screens/registration/widgets/image/un_selected_image_widget.dart';
 import 'package:event_management/utils/snackbars/app_snackbars.dart';
-import 'package:event_management/widgets/buttons/primary_button_widget.dart';
-import 'package:event_management/widgets/dropdown/dropdown_widget.dart';
-import 'package:event_management/widgets/loading_widget/app_loading_widget.dart';
-import 'package:event_management/widgets/text/required_text_widget.dart';
-import 'package:event_management/widgets/text_fields/date_field_widget.dart';
-import 'package:event_management/widgets/text_fields/mobile_number_text_field.dart';
-import 'package:event_management/widgets/text_fields/password_text_field_widget.dart';
-import 'package:event_management/widgets/text_fields/text_field_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MemberRegistrationScreen extends StatefulWidget {
   const MemberRegistrationScreen({super.key});
@@ -38,6 +50,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController streetAddressController = TextEditingController();
+  final TextEditingController latLongController = TextEditingController();
   final TextEditingController streetController = TextEditingController();
 
   final TextEditingController clubNameController = TextEditingController();
@@ -47,6 +60,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
   final TextEditingController clubSecretaryController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
   final TextEditingController mobileNumberController = TextEditingController();
+  final TextEditingController clubRegionController = TextEditingController();
 
   // focus nodes
   final FocusNode lastNameNode = FocusNode();
@@ -57,6 +71,10 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
   final FocusNode clubPresidentNode = FocusNode();
   final FocusNode nationalPresidentNode = FocusNode();
   final FocusNode clubSecretaryNode = FocusNode();
+
+  // files
+  File? governmentIdFile;
+  File? selfieWithGovernmentIdFile;
 
   // dropdown lists
   List<String> provinceList = [
@@ -80,15 +98,6 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
     "Bito-on",
   ];
 
-  final List<String> clubRegionsList = [
-    "Alang-alang",
-    "Baliok",
-    "Bantigue",
-    "Bato",
-    "Binaliw",
-    "Bito-on",
-  ];
-
   final List<String> yesNoList = [
     'Yes',
     'No',
@@ -98,12 +107,18 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
   String selectedProvince = "Aklan";
   String selectedCity = "Alang-alang";
   String selectedBarangay = "Alang-alang";
-  String selectedClubRegion = "Alang-alang";
   String selectedYesNo = "Yes";
 
+  // Other variables
+  double lat = 0;
+  double lng = 0;
+  String address = "";
+
+  Set<Marker> markers = {};
   @override
   void initState() {
     super.initState();
+
     Future.wait(
       [
         // Api calls
@@ -144,13 +159,17 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
       "province": selectedProvince,
       "city": selectedCity,
       "club_name": clubNameController.text,
-      "club_region": selectedClubRegion,
+      "club_region": clubRegionController.text,
       "club_president": clubPresidentController.text,
       "national_president": nationalPresidentController.text,
       "date": dateController.text,
       "pe_ID": selectedYesNo,
       "club_secretry_name": clubSecretaryController.text,
       "club_secretry_NO": mobileNumberController.text,
+      "lattitiude": lat.toString(),
+      "longitude": lng.toString(),
+      "governmentIDImage": governmentIdFile,
+      "selfieIDImage": selfieWithGovernmentIdFile,
     }).then((_) {
       // AppToasts.successToast("Registration Successful");
       AppSnackbars.successSnackbar(context, "Registration Successful");
@@ -162,6 +181,16 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
         error.toString().replaceAll("Exception:", ""),
       );
     });
+  }
+
+  void launchGoogleMaps() async {
+    const url =
+        'https://www.google.com/maps/search/?api=1&query=current+location';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch Google Maps';
+    }
   }
 
   @override
@@ -195,7 +224,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
           controller: tabController,
           indicator: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: AppColors.successColor,
+            color: AppColors.secondaryColor,
           ),
           tabs: [
             Tab(
@@ -285,18 +314,6 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                     },
                   ),
                   const SizedBox(height: 10.0),
-                  const RequiredTextWidget(text: "Street Address"),
-                  const SizedBox(height: 5.0),
-                  TextFieldWidget(
-                    controller: streetController,
-                    focusNode: streetNode,
-                    prefixIcon: Ionicons.location_outline,
-                    label: "Enter Your Street Address",
-                    textInputAction: TextInputAction.done,
-                  ),
-
-                  const SizedBox(height: 10.0),
-
                   const RequiredTextWidget(text: "Province"),
                   const SizedBox(height: 5.0),
                   // province dropdown
@@ -334,6 +351,155 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                         selectedBarangay = p0!;
                       });
                     },
+                  ),
+                  const SizedBox(height: 10.0),
+                  const RequiredTextWidget(text: "Street Address"),
+                  const SizedBox(height: 5.0),
+                  TextFieldWidget(
+                    controller: streetController,
+                    focusNode: streetNode,
+                    prefixIcon: Ionicons.location_outline,
+                    label: "Enter Your Street Address",
+                    textInputAction: TextInputAction.done,
+                  ),
+                  const SizedBox(height: 20.0),
+                  SecondaryButtonWidget(
+                      caption: "Get Location",
+                      onPressed: () async {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return SimpleDialog(
+                              title: const Text("Select Location"),
+                              children: [
+                                SimpleDialogOption(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    final locationController =
+                                        LocationController();
+                                    locationController
+                                        .getLocation()
+                                        .then((position) {
+                                      setState(() {
+                                        lat = position.latitude;
+                                        lng = position.longitude;
+                                        locationController
+                                            .getAddressFromLatLang(position)
+                                            .then((add) {
+                                          streetController.text = add;
+                                        });
+                                      });
+                                    });
+                                  },
+                                  child: const Text("Current Location"),
+                                ),
+                                SimpleDialogOption(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const GoogleMapScreen(),
+                                      ),
+                                    ).then((value) {
+                                      if (value != null) {
+                                        setState(() {
+                                          address = value['address'];
+                                          lat = value['lat'];
+                                          lng = value['lng'];
+                                          setState(() {
+                                            streetController.text = address;
+                                          });
+                                        });
+                                      }
+                                    });
+                                  },
+                                  child: const Text("Custom Location"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }),
+                  const SizedBox(height: 20.0),
+                  const RequiredTextWidget(text: "Latitude and Longitude"),
+                  const SizedBox(height: 5.0),
+                  (lat == 0.0 && lng == 0.0)
+                      ? const SizedBox.shrink()
+                      : Row(
+                          children: [
+                            Expanded(
+                              child: ContainerTextWidget(
+                                text: "lat: ${lat.toStringAsFixed(2)}",
+                                icon: Ionicons.location_outline,
+                              ),
+                            ),
+                            const SizedBox(width: 10.0),
+                            Expanded(
+                              child: ContainerTextWidget(
+                                text: "lng: ${lng.toStringAsFixed(2)}",
+                                icon: Ionicons.location_outline,
+                              ),
+                            ),
+                          ],
+                        ),
+                  const SizedBox(height: 10.0),
+                  const RequiredTextWidget(text: "IDs"),
+                  const SizedBox(height: 5.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      governmentIdFile == null
+                          ? const UnSelectedImageWidget()
+                          : CircularImageWidget(
+                              imageFile: governmentIdFile!,
+                            ),
+                      TextButton(
+                        onPressed: () async {
+                          try {
+                            governmentIdFile =
+                                await appImagePicker(ImageSource.gallery);
+                            setState(() {});
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(e.toString()),
+                              ),
+                            );
+                          }
+                        },
+                        child: const Text("Upload Government ID"),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      selfieWithGovernmentIdFile == null
+                          ? const UnSelectedImageWidget()
+                          : CircularImageWidget(
+                              imageFile: selfieWithGovernmentIdFile!,
+                            ),
+                      TextButton(
+                        onPressed: () async {
+                          try {
+                            selfieWithGovernmentIdFile =
+                                await appImagePicker(ImageSource.camera);
+
+                            setState(() {});
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(e.toString()),
+                              ),
+                            );
+                          }
+                        },
+                        child: const Text("Upload Selfie Government ID"),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 20.0),
                   PrimaryButtonWidget(
@@ -380,21 +546,16 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                   const RequiredTextWidget(text: "Club Region"),
                   const SizedBox(height: 5.0),
                   // club region dropdown
-                  DropdownWidget(
-                    stringList: clubRegionsList,
-                    selectedString: selectedClubRegion,
-                    onChanged: (p0) {
-                      setState(() {
-                        selectedClubRegion = p0!;
-                      });
-                    },
+                  TextFieldWidget(
+                    controller: clubRegionController,
+                    label: "Enter Your Club Region",
                   ),
                   const SizedBox(height: 10.0),
                   const RequiredTextWidget(text: "Club President"),
                   const SizedBox(height: 5.0),
                   TextFieldWidget(
                     controller: clubPresidentController,
-                    label: "Enter your Club President",
+                    label: "Enter Your Club President",
                   ),
                   const SizedBox(height: 10.0),
                   const RequiredTextWidget(text: "National President"),

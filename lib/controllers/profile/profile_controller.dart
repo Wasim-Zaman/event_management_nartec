@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:event_management/constants/api_manager.dart';
-import 'package:event_management/constants/url.dart';
+import 'package:event_management/common/constants/api_manager.dart';
+import 'package:event_management/common/constants/url.dart';
 import 'package:event_management/models/profile/profile_model.dart';
 
 class ProfileController {

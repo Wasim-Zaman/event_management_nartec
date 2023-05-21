@@ -49,6 +49,15 @@ dependencies:
   loading_animation_widget: ^1.2.0+4
   provider: ^6.0.5
   flutter_exit_app: ^1.1.2
+  geolocator: ^9.0.2
+  url_launcher: ^6.1.11
+  image_picker: ^0.8.7+5
+  path_provider: ^2.0.15
+  flutter_image_compress: ^2.0.3
+  cached_network_image: ^3.2.3
+  flutter_google_places: ^0.3.0
+  geocoding: ^2.1.0
+  google_maps_flutter: ^2.2.6
 
 dev_dependencies:
   flutter_test:
