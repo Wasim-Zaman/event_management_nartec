@@ -7,6 +7,7 @@ import 'package:event_management/common/widgets/text_fields/text_field_widget.da
 import 'package:event_management/controllers/HelpDesk/help_desk_controller.dart';
 import 'package:event_management/screens/profile/components/app_drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 
 class HelpDeskScreen extends StatefulWidget {
   const HelpDeskScreen({Key? key}) : super(key: key);
@@ -54,25 +55,41 @@ class _HelpDeskScreenState extends State<HelpDeskScreen> {
                     text: "First Name",
                   ),
                   const SizedBox(height: 5),
-                  TextFieldWidget(controller: _firstNameController),
+                  TextFieldWidget(
+                    controller: _firstNameController,
+                    prefixIcon: Ionicons.person_outline,
+                    label: "Enter first name",
+                  ),
                   const SizedBox(height: 10),
                   const RequiredTextWidget(
                     text: "Last Name",
                   ),
                   const SizedBox(height: 5),
-                  TextFieldWidget(controller: _lastNameController),
+                  TextFieldWidget(
+                    controller: _lastNameController,
+                    prefixIcon: Ionicons.person_outline,
+                    label: "Enter last name",
+                  ),
                   const SizedBox(height: 10),
                   const RequiredTextWidget(
                     text: "Email",
                   ),
                   const SizedBox(height: 5),
-                  TextFieldWidget(controller: _emailController),
+                  TextFieldWidget(
+                    controller: _emailController,
+                    prefixIcon: Ionicons.mail_outline,
+                    label: "Enter email",
+                  ),
                   const SizedBox(height: 10),
                   const RequiredTextWidget(
                     text: "Whats's the issue?",
                   ),
                   const SizedBox(height: 5),
-                  TextFieldWidget(controller: _issuesController),
+                  TextFieldWidget(
+                    controller: _issuesController,
+                    prefixIcon: Ionicons.help_outline,
+                    label: "Enter issue",
+                  ),
                   const SizedBox(height: 10),
                   const RequiredTextWidget(
                     text: "Additional Details",
