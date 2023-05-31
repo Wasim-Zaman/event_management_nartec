@@ -1,10 +1,12 @@
 import 'package:event_management/common/constants/app_colors.dart';
 import 'package:event_management/providers/profile/member_profile.dart';
 import 'package:event_management/screens/Event/current_event_screen.dart';
+import 'package:event_management/screens/HelpDisk/help_desk_screen.dart';
 import 'package:event_management/screens/login/member_login_screen.dart';
 import 'package:event_management/screens/profile/member_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -48,8 +50,9 @@ class AppDrawer extends StatelessWidget {
                 Navigator.pop(context);
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const MemberProfileScreen(),
+                  PageTransition(
+                    type: PageTransitionType.rightToLeft,
+                    child: const MemberProfileScreen(),
                   ),
                 );
               },
@@ -61,8 +64,9 @@ class AppDrawer extends StatelessWidget {
                 Navigator.pop(context);
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const CurrentEventScreen(),
+                  PageTransition(
+                    type: PageTransitionType.rightToLeft,
+                    child: const CurrentEventScreen(),
                   ),
                 );
               },
@@ -72,6 +76,13 @@ class AppDrawer extends StatelessWidget {
               icon: Ionicons.help_outline,
               onTap: () {
                 Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  PageTransition(
+                    type: PageTransitionType.rightToLeft,
+                    child: const HelpDeskScreen(),
+                  ),
+                );
               },
             ),
             DrawerItem(
