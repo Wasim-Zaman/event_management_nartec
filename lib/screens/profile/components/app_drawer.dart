@@ -1,7 +1,6 @@
 import 'package:event_management/common/constants/app_colors.dart';
 import 'package:event_management/providers/profile/member_profile.dart';
 import 'package:event_management/screens/Event/current_event_screen.dart';
-import 'package:event_management/screens/HelpDisk/help_desk_screen.dart';
 import 'package:event_management/screens/login/member_login_screen.dart';
 import 'package:event_management/screens/profile/member_profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +50,7 @@ class AppDrawer extends StatelessWidget {
                 Navigator.pushReplacement(
                   context,
                   PageTransition(
-                    type: PageTransitionType.rightToLeft,
+                    type: PageTransitionType.leftToRightPop,
                     child: const MemberProfileScreen(),
                   ),
                 );
@@ -65,7 +64,7 @@ class AppDrawer extends StatelessWidget {
                 Navigator.pushReplacement(
                   context,
                   PageTransition(
-                    type: PageTransitionType.rightToLeft,
+                    type: PageTransitionType.leftToRightPop,
                     child: const CurrentEventScreen(),
                   ),
                 );
@@ -76,13 +75,13 @@ class AppDrawer extends StatelessWidget {
               icon: Ionicons.help_outline,
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushReplacement(
-                  context,
-                  PageTransition(
-                    type: PageTransitionType.rightToLeft,
-                    child: const HelpDeskScreen(),
-                  ),
-                );
+                // Navigator.pushReplacement(
+                //   context,
+                //   PageTransition(
+                //     type: PageTransitionType.leftToRightPop,
+                //     child: const HelpDeskScreen(),
+                //   ),
+                // );
               },
             ),
             DrawerItem(

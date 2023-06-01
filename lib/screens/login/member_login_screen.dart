@@ -1,3 +1,4 @@
+import 'package:event_management/common/constants/app_snackbar.dart';
 import 'package:event_management/common/constants/app_text_style.dart';
 import 'package:event_management/common/widgets/buttons/primary_button_widget.dart';
 import 'package:event_management/common/widgets/buttons/secondary_button_widget.dart';
@@ -20,17 +21,21 @@ class _MemberLoginScreenState extends State<MemberLoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  login() {
+  login() async {
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       Fluttertoast.showToast(
         msg: "Please fill all the fields",
       );
     } else {
-      LoginController.login(
-        context,
-        emailController.text,
-        passwordController.text,
-      );
+      try {
+        await LoginController.login(
+          context,
+          emailController.text,
+          passwordController.text,
+        );
+      } catch (e) {
+        AppSnackbar.error(context, e.toString());
+      }
     }
   }
 
