@@ -16,7 +16,7 @@ class LoginController {
     String password,
   ) async {
     try {
-      final response = ApiManager.postRequest(
+      final response = await ApiManager.postRequest(
         {
           "email": email,
           "password": password,
@@ -24,13 +24,23 @@ class LoginController {
         "${URL.baseUrl}UserLoginAuth",
       );
 
-      response.then((value) {
-        if (value.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print(json.decode(response.body));
+        // final responseBody = jsonDecode(response.body)["recordset"] as List;
+        // if (responseBody.isEmpty) {
+        //   Fluttertoast.showToast(
+        //     msg: "Invalid credentials",
+        //     backgroundColor: AppColors.dangerColor,
+        //   );
+        //   return;
+        // }
+        bool success = jsonDecode(response.body)["success"];
+        if (success) {
           // Save email and password in provider
           context.read<MemberProfile>().setEmail(email);
           context.read<MemberProfile>().setPassword(password);
           context.read<MemberProfile>().setMemberId(
-              jsonDecode(value.body)["recordsets"][0][0]["memberID"]);
+              jsonDecode(response.body)["user"][0]["memberID"].toString());
 
           // Navigate to profile screen
           Navigator.pushReplacement(
@@ -39,17 +49,15 @@ class LoginController {
               builder: (context) => const MemberProfileScreen(),
             ),
           );
-        } else {
-          Fluttertoast.showToast(
-            msg: jsonDecode(value.body)["message"],
-            backgroundColor: AppColors.dangerColor,
-          );
         }
-      });
-    } catch (error) {
-      Fluttertoast.showToast(
-        msg: error.toString(),
-      );
+      } else {
+        Fluttertoast.showToast(
+          msg: "Invalid status code",
+          backgroundColor: AppColors.dangerColor,
+        );
+      }
+    } catch (e) {
+      print(e.toString());
     }
   }
 }

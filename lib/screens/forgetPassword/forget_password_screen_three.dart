@@ -34,6 +34,41 @@ class _ForgetPasswordScreenThreeState extends State<ForgetPasswordScreenThree> {
     super.initState();
   }
 
+  verifyOtp(BuildContext context) async {
+    if (passwordController.text.isEmpty) {
+      AppSnackbar.error(context, "Please enter password");
+      return;
+    }
+    try {
+      bool isChanged = await ResetPasswordController.changePassword(
+        email,
+        passwordController.text,
+      );
+      if (isChanged) {
+        AppSnackbar.success(context, "Password changed successfully");
+        Future.delayed(Duration(seconds: 2), () {
+          Navigator.pushReplacement(
+            context,
+            PageTransition(
+              child: MemberLoginScreen(),
+              type: PageTransitionType.fade,
+            ),
+          );
+        });
+      } else {
+        AppSnackbar.error(context, "Something went wrong");
+      }
+    } catch (e) {
+      AppSnackbar.error(context, e.toString());
+    }
+  }
+
+  @override
+  void dispose() {
+    passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,34 +107,7 @@ class _ForgetPasswordScreenThreeState extends State<ForgetPasswordScreenThree> {
                   SecondaryButtonWidget(
                     caption: "Reset Password",
                     onPressed: () async {
-                      if (passwordController.text.isEmpty) {
-                        AppSnackbar.error(context, "Please enter password");
-                        return;
-                      }
-                      try {
-                        bool isChanged =
-                            await ResetPasswordController.changePassword(
-                          email,
-                          passwordController.text,
-                        );
-                        if (isChanged) {
-                          AppSnackbar.success(
-                              context, "Password changed successfully");
-                          Future.delayed(Duration(seconds: 2), () {
-                            Navigator.pushReplacement(
-                              context,
-                              PageTransition(
-                                child: MemberLoginScreen(),
-                                type: PageTransitionType.fade,
-                              ),
-                            );
-                          });
-                        } else {
-                          AppSnackbar.error(context, "Something went wrong");
-                        }
-                      } catch (e) {
-                        AppSnackbar.error(context, e.toString());
-                      }
+                      await verifyOtp(context);
                     },
                   ),
                 ],

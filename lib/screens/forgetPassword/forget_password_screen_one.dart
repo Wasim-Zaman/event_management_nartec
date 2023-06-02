@@ -27,6 +27,32 @@ class _ForgetPasswordScreenOneState extends State<ForgetPasswordScreenOne> {
     super.dispose();
   }
 
+  resetPassword(BuildContext context) async {
+    if (emailController.text.isEmpty) {
+      AppSnackbars.errorSnackbar(
+        context,
+        'Please enter email address',
+      );
+    } else {
+      Provider.of<MemberProfile>(context, listen: false)
+          .setEmail(emailController.text);
+      var otp = await ResetPasswordController.resetPassword(
+        emailController.text.trim(),
+      );
+
+      Navigator.push(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeft,
+          child: const ForgetPasswordScreenTwo(),
+          settings: RouteSettings(
+            arguments: otp,
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,29 +83,7 @@ class _ForgetPasswordScreenOneState extends State<ForgetPasswordScreenOne> {
                   PrimaryButtonWidget(
                     caption: "Continue",
                     onPressed: () async {
-                      if (emailController.text.isEmpty) {
-                        AppSnackbars.errorSnackbar(
-                          context,
-                          'Please enter email address',
-                        );
-                      } else {
-                        Provider.of<MemberProfile>(context, listen: false)
-                            .setEmail(emailController.text);
-                        var otp = await ResetPasswordController.resetPassword(
-                          emailController.text.trim(),
-                        );
-
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.rightToLeft,
-                            child: const ForgetPasswordScreenTwo(),
-                            settings: RouteSettings(
-                              arguments: otp,
-                            ),
-                          ),
-                        );
-                      }
+                      await resetPassword(context);
                     },
                   ),
                 ],

@@ -23,13 +23,26 @@ class ProfileController {
   }
 
   /// update profile
-  static Future<bool> updateProfile(ProfileModel member) async {
+  static Future<bool> updateProfile(
+      ProfileModel member, String memberId) async {
     try {
       var response = await ApiManager.putRequest(
-        member.toJson(),
-        "${URL.baseUrl}updateMember",
+        {
+          "first_name": member.firstName,
+          "last_name": member.lastName,
+          "barangay": member.barangay,
+          "province": member.province,
+          "city": member.city,
+          "club_name": member.clubName,
+          "club_region": member.clubRegion,
+          "club_president": member.clubPresident,
+          "Suffix": member.suffix,
+        },
+        "${URL.baseUrl}tblUpdateMembers/$memberId",
       );
-      if (response.statusCode == 200) {
+      print(response.statusCode);
+      print(jsonDecode(response.body));
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
       } else {
         throw Exception('Failed to update member!');

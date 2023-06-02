@@ -1,101 +1,37 @@
-// ignore_for_file: library_private_types_in_public_api, non_constant_identifier_names, deprecated_member_use
-
-import 'dart:io';
-
-import 'package:event_management/common/constants/app_colors.dart';
-import 'package:event_management/common/services/image_picker/app_image_picker.dart';
 import 'package:event_management/common/widgets/buttons/primary_button_widget.dart';
-import 'package:event_management/common/widgets/buttons/secondary_button_widget.dart';
 import 'package:event_management/common/widgets/dropdown/dropdown_widget.dart';
-import 'package:event_management/common/widgets/loading_widget/app_loading_widget.dart';
-import 'package:event_management/common/widgets/text/container_text_widget.dart';
-import 'package:event_management/common/widgets/text/required_text_widget.dart';
-import 'package:event_management/common/widgets/text_fields/date_field_widget.dart';
-import 'package:event_management/common/widgets/text_fields/password_text_field_widget.dart';
+import 'package:event_management/common/widgets/text/heading_text_widget.dart';
 import 'package:event_management/common/widgets/text_fields/text_field_widget.dart';
-import 'package:event_management/controllers/location/location_controller.dart';
-import 'package:event_management/controllers/registration/registration_controller.dart';
-import 'package:event_management/screens/map/google_map_screen.dart';
-import 'package:event_management/screens/registration/widgets/image/circular_image_widget.dart';
-import 'package:event_management/screens/registration/widgets/image/un_selected_image_widget.dart';
+import 'package:event_management/controllers/profile/profile_controller.dart';
+import 'package:event_management/models/profile/profile_model.dart';
+import 'package:event_management/providers/profile/member_profile.dart';
 import 'package:event_management/utils/snackbars/app_snackbars.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:provider/provider.dart';
 
-class UpdateMemeberScreen extends StatefulWidget {
-  const UpdateMemeberScreen({super.key});
+class UpdateMemberScreen extends StatefulWidget {
+  const UpdateMemberScreen({Key? key}) : super(key: key);
 
   @override
-  _UpdateMemeberScreenState createState() => _UpdateMemeberScreenState();
+  State<UpdateMemberScreen> createState() => _UpdateMemberScreenState();
 }
 
-class _UpdateMemeberScreenState extends State<UpdateMemeberScreen>
-    with SingleTickerProviderStateMixin {
-  bool screenLoaded = false;
-
-  late TabController tabController = TabController(
-    length: 2,
-    vsync: this,
-    initialIndex: 0,
-  );
-
-  // text fields controllers
+class _UpdateMemberScreenState extends State<UpdateMemberScreen> {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController streetAddressController = TextEditingController();
-  final TextEditingController latLongController = TextEditingController();
-  final TextEditingController streetController = TextEditingController();
-
+  final TextEditingController barangayController = TextEditingController();
+  final TextEditingController cityController = TextEditingController();
+  final TextEditingController provinceController = TextEditingController();
   final TextEditingController clubNameController = TextEditingController();
-  final TextEditingController clubPresidentController = TextEditingController();
-  final TextEditingController nationalPresidentController =
-      TextEditingController();
-  final TextEditingController clubSecretaryController = TextEditingController();
-  final TextEditingController dateController = TextEditingController();
-  final TextEditingController mobileNumberController = TextEditingController();
   final TextEditingController clubRegionController = TextEditingController();
+  final TextEditingController clubPresidentController = TextEditingController();
+  final TextEditingController suffixController = TextEditingController();
 
-  // focus nodes
-  final FocusNode lastNameNode = FocusNode();
-  final FocusNode emailNode = FocusNode();
-  final FocusNode passwordNode = FocusNode();
-  final FocusNode streetAddressNode = FocusNode();
-  final FocusNode streetNode = FocusNode();
-  final FocusNode clubPresidentNode = FocusNode();
-  final FocusNode nationalPresidentNode = FocusNode();
-  final FocusNode clubSecretaryNode = FocusNode();
-
-  // files
-  File? governmentIdFile;
-  File? selfieWithGovernmentIdFile;
-
-  // dropdown lists
-  List<String> provinceList = [
-    "Aklan",
-    "Albay",
-  ];
-  List<String> citiesList = [
-    "Alang-alang",
-    "Baliok",
-    "Bantigue",
-    "Bato",
-    "Binaliw",
-    "Bito-on",
-  ];
-  final List<String> barangayList = [
-    "Alang-alang",
-    "Baliok",
-    "Bantigue",
-    "Bato",
-    "Binaliw",
-    "Bito-on",
-  ];
-
+  String memberId = "";
+  String selectedSuffix = "Mr";
+  String email = '', password = '';
+  ProfileModel? profileModel;
   final List<String> suffixList = [
     'Mr',
     'Mrs',
@@ -111,172 +47,97 @@ class _UpdateMemeberScreenState extends State<UpdateMemeberScreen>
     '3rd',
   ];
 
-  final List<String> yesNoList = [
-    'Yes',
-    'No',
-  ];
-
-  // dropdown values
-  String selectedProvince = "Aklan";
-  String selectedCity = "Alang-alang";
-  String selectedBarangay = "Alang-alang";
-  String selectedYesNo = "Yes";
-  String selectedSuffix = "Mr";
-
-  // Other variables
-  double lat = 0;
-  double lng = 0;
-  String address = "";
-
-  Set<Marker> markers = {};
   @override
   void initState() {
-    super.initState();
-
-    Future.wait(
-      [
-        // Api calls
-        RegistrationController.getAllCities().then((response) {
-          Future.delayed(Duration.zero, () {
-            citiesList = response.map((city) {
-              return city.citiyname.toString();
-            }).toList();
-            selectedCity = citiesList.first;
-          });
-        }),
-        RegistrationController.getAllProvinces().then((response) {
-          Future.delayed(Duration.zero, () {
-            provinceList = response.map((province) {
-              return province.provincename.toString();
-            }).toList();
-            selectedProvince = provinceList.first;
-          });
-        }),
-      ],
-    ).then((_) {
-      Future.delayed(const Duration(milliseconds: 500), () {
+    Future.delayed(Duration.zero, () {}).then((_) {
+      setState(() {
+        memberId = context.read<MemberProfile>().memberid;
+      });
+      email = context.read<MemberProfile>().email;
+      password = context.read<MemberProfile>().password;
+      ProfileController.getMember(email, password).then((model) {
         setState(() {
-          screenLoaded = true;
+          profileModel = model;
+          firstNameController.text = profileModel!.firstName!;
+          lastNameController.text = profileModel!.lastName!;
+          barangayController.text = profileModel!.barangay!;
+          cityController.text = profileModel!.city!;
+          provinceController.text = profileModel!.province!;
+          clubNameController.text = profileModel!.clubName!;
+          clubRegionController.text = profileModel!.clubRegion!;
+          clubPresidentController.text = profileModel!.clubPresident!;
+          suffixController.text = profileModel!.suffix!;
+          selectedSuffix = profileModel!.suffix!;
         });
-      }).onError((error, stackTrace) => null);
+      }).onError((error, stackTrace) {});
     });
+    super.initState();
   }
 
-  register() {
-    RegistrationController.registerUser({
-      "email": emailController.text,
-      "password": passwordController.text,
-      "first_name": firstNameController.text,
-      "last_name": lastNameController.text,
-      "street_address": streetController.text,
-      "barangay": selectedBarangay,
-      "province": selectedProvince,
-      "city": selectedCity,
-      "club_name": clubNameController.text,
-      "club_region": clubRegionController.text,
-      "club_president": clubPresidentController.text,
-      // "national_president": nationalPresidentController.text,
-      "date": dateController.text,
-      "pe_ID": selectedYesNo,
-      // "club_secretry_name": clubSecretaryController.text,
-      // "club_secretry_NO": mobileNumberController.text,
-      "lattitiude": lat.toString(),
-      "longitude": lng.toString(),
-      "governmentIDImage": governmentIdFile,
-      "selfieIDImage": selfieWithGovernmentIdFile,
-      "Suffix": selectedSuffix,
-    }).then((_) {
-      // AppToasts.successToast("Registration Successful");
-      AppSnackbars.successSnackbar(context, "Registration Successful");
-      Navigator.pop(context);
-    }).onError((error, stackTrace) {
-      // AppToasts.errorToast(error.toString());
+  updateMember() async {
+    try {
+      bool isUpdated = await ProfileController.updateProfile(
+        ProfileModel(
+          firstName: firstNameController.text,
+          lastName: lastNameController.text,
+          barangay: barangayController.text,
+          city: cityController.text,
+          province: provinceController.text,
+          clubName: clubNameController.text,
+          clubRegion: clubRegionController.text,
+          clubPresident: clubPresidentController.text,
+          suffix: selectedSuffix,
+        ),
+        memberId,
+      );
+      if (isUpdated) {
+        AppSnackbars.successSnackbar(
+          context,
+          'Profile updated successfully',
+        );
+        Navigator.pop(context);
+      } else {
+        AppSnackbars.errorSnackbar(
+          context,
+          'Something went wrong',
+        );
+      }
+    } catch (e) {
       AppSnackbars.errorSnackbar(
         context,
-        error.toString().replaceAll("Exception:", ""),
+        'Something went wrong',
       );
-    });
-  }
-
-  void launchGoogleMaps() async {
-    const url =
-        'https://www.google.com/maps/search/?api=1&query=current+location';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch Google Maps';
     }
   }
 
   @override
   void dispose() {
-    tabController.dispose();
     firstNameController.dispose();
     lastNameController.dispose();
-    streetAddressController.dispose();
+    barangayController.dispose();
+    cityController.dispose();
+    provinceController.dispose();
     clubNameController.dispose();
+    clubRegionController.dispose();
     clubPresidentController.dispose();
-    nationalPresidentController.dispose();
-    clubSecretaryController.dispose();
-    dateController.dispose();
-    // nodes
-    lastNameNode.dispose();
-    emailNode.dispose();
-    passwordNode.dispose();
-    streetAddressNode.dispose();
-    clubPresidentNode.dispose();
-    nationalPresidentNode.dispose();
-    clubSecretaryNode.dispose();
+    suffixController.dispose();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Member Registration'),
-        bottom: TabBar(
-          controller: tabController,
-          indicator: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: AppColors.secondaryColor,
-          ),
-          tabs: [
-            Tab(
-              text: 'Personal Information'.toUpperCase(),
-            ),
-            Tab(
-              text: 'tfoe-pe details'.toUpperCase(),
-            ),
-          ],
-        ),
-      ),
-      body: TabBarView(
-        controller: tabController,
-        children: !screenLoaded
-            ? [
-                const AppLoadingWidget(),
-                const SizedBox.shrink(),
-              ]
-            : [
-                personalInformation(),
-                toePeDetails(),
-              ],
-      ),
-    );
-  }
-
-  SizedBox personalInformation() {
-    return SizedBox.expand(
-      child: SingleChildScrollView(
+      appBar: AppBar(title: const Text('Update Profile')),
+      body: SingleChildScrollView(
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(15.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const RequiredTextWidget(text: "Suffix"),
-                  const SizedBox(height: 5.0),
+                  HeadingTextWidget(text: "Suffix"),
                   DropdownWidget(
                     stringList: suffixList,
                     selectedString: selectedSuffix,
@@ -286,355 +147,63 @@ class _UpdateMemeberScreenState extends State<UpdateMemeberScreen>
                       });
                     },
                   ),
-                  const SizedBox(height: 10.0),
-                  const RequiredTextWidget(text: "First Name"),
-                  const SizedBox(height: 5.0),
+                  const SizedBox(height: 10),
+                  HeadingTextWidget(text: "First Name"),
                   TextFieldWidget(
                     controller: firstNameController,
-                    label: "Enter Your First Name",
                     prefixIcon: Ionicons.person_outline,
-                    onFieldSubmitted: (p0) {
-                      FocusScope.of(context).requestFocus(lastNameNode);
-                    },
                   ),
-                  const SizedBox(height: 10.0),
-                  const RequiredTextWidget(text: "Last Name"),
-                  const SizedBox(height: 5.0),
+                  const SizedBox(height: 10),
+                  HeadingTextWidget(text: "Last Name"),
                   TextFieldWidget(
                     controller: lastNameController,
-                    label: "Enter Your Last Name",
                     prefixIcon: Ionicons.person_outline,
-                    focusNode: lastNameNode,
-                    onFieldSubmitted: (p0) {
-                      FocusScope.of(context).requestFocus(emailNode);
-                    },
                   ),
-                  const SizedBox(height: 10.0),
-                  const RequiredTextWidget(text: "Email"),
-                  const SizedBox(height: 5.0),
+                  const SizedBox(height: 10),
+                  HeadingTextWidget(text: "Barangay"),
                   TextFieldWidget(
-                    controller: emailController,
-                    focusNode: emailNode,
-                    prefixIcon: Ionicons.mail_outline,
-                    label: "Enter Your Email",
-                    onFieldSubmitted: (p0) {
-                      FocusScope.of(context).requestFocus(passwordNode);
-                    },
-                    validator: (p0) {
-                      if (p0!.isEmpty) {
-                        return "Email is required";
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 10.0),
-                  const RequiredTextWidget(text: "Password"),
-                  const SizedBox(height: 5.0),
-                  PasswordTextFieldWidget(
-                    controller: passwordController,
-                    prefixIcon: Ionicons.lock_closed_outline,
-                    label: "Enter Your Password",
-                    focusNode: passwordNode,
-                    textInputAction: TextInputAction.next,
-                    onFieldSubmitted: (p0) {
-                      FocusScope.of(context).requestFocus(streetNode);
-                    },
-                  ),
-                  const SizedBox(height: 10.0),
-                  const RequiredTextWidget(text: "Province"),
-                  const SizedBox(height: 5.0),
-                  // province dropdown
-                  DropdownWidget(
-                    stringList: provinceList,
-                    selectedString: selectedProvince,
-                    onChanged: (p0) {
-                      setState(() {
-                        selectedProvince = p0!;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 10.0),
-                  const RequiredTextWidget(text: "City"),
-                  const SizedBox(height: 5.0),
-                  // city dropdown
-                  DropdownWidget(
-                    stringList: citiesList,
-                    selectedString: selectedCity,
-                    onChanged: (p0) {
-                      setState(() {
-                        selectedCity = p0!;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 10.0),
-                  const RequiredTextWidget(text: "Barangay"),
-                  const SizedBox(height: 5.0),
-                  // barangay dropdown
-                  DropdownWidget(
-                    stringList: barangayList,
-                    selectedString: selectedBarangay,
-                    onChanged: (p0) {
-                      setState(() {
-                        selectedBarangay = p0!;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 10.0),
-                  const RequiredTextWidget(text: "Street Address"),
-                  const SizedBox(height: 5.0),
-                  TextFieldWidget(
-                    controller: streetController,
-                    focusNode: streetNode,
+                    controller: barangayController,
                     prefixIcon: Ionicons.location_outline,
-                    label: "Enter Your Street Address",
-                    textInputAction: TextInputAction.done,
                   ),
-                  const SizedBox(height: 20.0),
-                  SecondaryButtonWidget(
-                      caption: "Get Location",
-                      onPressed: () async {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return SimpleDialog(
-                              title: const Text("Select Location"),
-                              children: [
-                                SimpleDialogOption(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    final locationController =
-                                        LocationController();
-                                    locationController
-                                        .getLocation()
-                                        .then((position) {
-                                      setState(() {
-                                        lat = position.latitude;
-                                        lng = position.longitude;
-                                        locationController
-                                            .getAddressFromLatLang(position)
-                                            .then((add) {
-                                          streetController.text = add;
-                                        });
-                                      });
-                                    });
-                                  },
-                                  child: const Text("Current Location"),
-                                ),
-                                SimpleDialogOption(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const GoogleMapScreen(),
-                                      ),
-                                    ).then((value) {
-                                      if (value != null) {
-                                        setState(() {
-                                          address = value['address'];
-                                          lat = value['lat'];
-                                          lng = value['lng'];
-                                          setState(() {
-                                            streetController.text = address;
-                                          });
-                                        });
-                                      }
-                                    });
-                                  },
-                                  child: const Text("Custom Location"),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      }),
-                  const SizedBox(height: 20.0),
-                  const RequiredTextWidget(text: "Latitude and Longitude"),
-                  const SizedBox(height: 5.0),
-                  (lat == 0.0 && lng == 0.0)
-                      ? const SizedBox.shrink()
-                      : Row(
-                          children: [
-                            Expanded(
-                              child: ContainerTextWidget(
-                                text: "lat: ${lat.toStringAsFixed(2)}",
-                                icon: Ionicons.location_outline,
-                              ),
-                            ),
-                            const SizedBox(width: 10.0),
-                            Expanded(
-                              child: ContainerTextWidget(
-                                text: "lng: ${lng.toStringAsFixed(2)}",
-                                icon: Ionicons.location_outline,
-                              ),
-                            ),
-                          ],
-                        ),
-                  const SizedBox(height: 10.0),
-                  const RequiredTextWidget(text: "IDs"),
-                  const SizedBox(height: 5.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      governmentIdFile == null
-                          ? const UnSelectedImageWidget()
-                          : CircularImageWidget(
-                              imageFile: governmentIdFile!,
-                            ),
-                      TextButton(
-                        onPressed: () async {
-                          try {
-                            governmentIdFile =
-                                await appImagePicker(ImageSource.gallery);
-                            setState(() {});
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(e.toString()),
-                              ),
-                            );
-                          }
-                        },
-                        child: const Text("Upload Government ID"),
-                      ),
-                    ],
+                  const SizedBox(height: 10),
+                  HeadingTextWidget(text: "City"),
+                  TextFieldWidget(
+                    controller: cityController,
+                    prefixIcon: Ionicons.location_outline,
                   ),
-                  const SizedBox(height: 10.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      selfieWithGovernmentIdFile == null
-                          ? const UnSelectedImageWidget()
-                          : CircularImageWidget(
-                              imageFile: selfieWithGovernmentIdFile!,
-                            ),
-                      TextButton(
-                        onPressed: () async {
-                          try {
-                            selfieWithGovernmentIdFile =
-                                await appImagePicker(ImageSource.camera);
-
-                            setState(() {});
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(e.toString()),
-                              ),
-                            );
-                          }
-                        },
-                        child: const Text("Upload Selfie Government ID"),
-                      ),
-                    ],
+                  const SizedBox(height: 10),
+                  HeadingTextWidget(text: "Province"),
+                  TextFieldWidget(
+                    controller: provinceController,
+                    prefixIcon: Ionicons.location_outline,
                   ),
-                  const SizedBox(height: 20.0),
-                  PrimaryButtonWidget(
-                    caption: "Next",
-                    onPressed: () {
-                      if (firstNameController.text.isEmpty ||
-                          lastNameController.text.isEmpty ||
-                          streetController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Please fill all required fields"),
-                          ),
-                        );
-                        return;
-                      }
-                      tabController.animateTo(1);
-                    },
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  SizedBox toePeDetails() {
-    return SizedBox.expand(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: [
-                  const RequiredTextWidget(text: "Club Name"),
-                  const SizedBox(height: 5.0),
+                  const SizedBox(height: 10),
+                  HeadingTextWidget(text: "Club Name"),
                   TextFieldWidget(
                     controller: clubNameController,
-                    label: "Enter Your Club Name",
+                    prefixIcon: Ionicons.person_outline,
                   ),
-                  const SizedBox(height: 10.0),
-                  const RequiredTextWidget(text: "Club Region"),
-                  const SizedBox(height: 5.0),
-                  // club region dropdown
+                  const SizedBox(height: 10),
+                  HeadingTextWidget(text: "Club Region"),
                   TextFieldWidget(
                     controller: clubRegionController,
-                    label: "Enter Your Club Region",
+                    prefixIcon: Ionicons.recording_outline,
                   ),
-                  const SizedBox(height: 10.0),
-                  const RequiredTextWidget(text: "Club President"),
-                  const SizedBox(height: 5.0),
+                  const SizedBox(height: 10),
+                  HeadingTextWidget(text: "Club President"),
                   TextFieldWidget(
                     controller: clubPresidentController,
-                    label: "Enter Your Club President",
+                    prefixIcon: Ionicons.person_outline,
                   ),
-                  // const SizedBox(height: 10.0),
-                  // const RequiredTextWidget(text: "National President"),
-                  // const SizedBox(height: 5.0),
-                  // TextFieldWidget(
-                  //   controller: nationalPresidentController,
-                  //   label: "Enter Your National President",
-                  //   focusNode: streetAddressNode,
-                  // ),
-                  const SizedBox(height: 10.0),
-                  const RequiredTextWidget(text: "Date Joined"),
-                  const SizedBox(height: 5.0),
-                  // date widget
-                  DateFieldWidget(controller: dateController),
-                  const SizedBox(height: 10.0),
-                  const RequiredTextWidget(
-                      text: "Do You Already Have TFOE-PE ID?"),
-                  const SizedBox(height: 5.0),
-                  // yes no dropdown
-                  DropdownWidget(
-                    stringList: yesNoList,
-                    selectedString: selectedYesNo,
-                    onChanged: (p0) {
-                      setState(() {
-                        selectedYesNo = p0!;
-                      });
-                    },
-                  ),
-                  // const SizedBox(height: 10.0),
-                  // const RequiredTextWidget(text: "Club Secretary Name"),
-                  // const SizedBox(height: 5.0),
-                  // TextFieldWidget(
-                  //   controller: clubSecretaryController,
-                  //   label: "Select Your Club Secretary Name",
-                  // ),
-                  // const SizedBox(height: 10.0),
-                  // const RequiredTextWidget(
-                  //     text: "Club Secretary Contact Number"),
-                  // const SizedBox(height: 5.0),
-                  // MobileNumberTextField(
-                  //   controller: mobileNumberController,
-                  // ),
-                  const SizedBox(height: 10.0),
+                  const SizedBox(height: 10),
                   PrimaryButtonWidget(
-                    caption: "Submit",
-                    onPressed: () {
-                      register();
-                    },
-                  ),
+                      caption: "Update",
+                      onPressed: () async {
+                        await updateMember();
+                      })
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

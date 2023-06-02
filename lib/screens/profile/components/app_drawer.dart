@@ -55,7 +55,7 @@ class AppDrawer extends StatelessWidget {
                             context,
                             PageTransition(
                               type: PageTransitionType.rightToLeft,
-                              child: const UpdateMemeberScreen(),
+                              child: const UpdateMemberScreen(),
                             ),
                           );
                         },

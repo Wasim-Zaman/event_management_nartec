@@ -14,7 +14,7 @@ class ApiManager {
       {dynamic headers}) async {
     return await put(
       Uri.parse(url),
-      body: body,
+      body: jsonEncode(body),
       headers: headers ??
           {
             'Content-type': 'application/json',
