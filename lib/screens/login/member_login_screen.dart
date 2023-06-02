@@ -5,10 +5,12 @@ import 'package:event_management/common/widgets/buttons/secondary_button_widget.
 import 'package:event_management/common/widgets/text_fields/password_text_field_widget.dart';
 import 'package:event_management/common/widgets/text_fields/text_field_widget.dart';
 import 'package:event_management/controllers/login/login_controller.dart';
+import 'package:event_management/screens/forgetPassword/forget_password_screen_one.dart';
 import 'package:event_management/screens/registration/member_registration_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:page_transition/page_transition.dart';
 
 class MemberLoginScreen extends StatefulWidget {
   const MemberLoginScreen({super.key});
@@ -84,7 +86,27 @@ class _MemberLoginScreenState extends State<MemberLoginScreen> {
                   prefixIcon: Ionicons.lock_closed_outline,
                   label: "Password",
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 10),
+                // forget password
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          PageTransition(
+                            child: ForgetPasswordScreenOne(),
+                            type: PageTransitionType.rightToLeftWithFade,
+                          ),
+                        );
+                      },
+                      child: const Text("Forget password?"),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
                 PrimaryButtonWidget(caption: "Log in", onPressed: login),
                 const SizedBox(height: 20),
                 SecondaryButtonWidget(

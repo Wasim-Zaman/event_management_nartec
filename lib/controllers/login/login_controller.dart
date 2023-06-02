@@ -29,6 +29,8 @@ class LoginController {
           // Save email and password in provider
           context.read<MemberProfile>().setEmail(email);
           context.read<MemberProfile>().setPassword(password);
+          context.read<MemberProfile>().setMemberId(
+              jsonDecode(value.body)["recordsets"][0][0]["memberID"]);
 
           // Navigate to profile screen
           Navigator.pushReplacement(

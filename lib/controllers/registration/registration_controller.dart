@@ -65,15 +65,16 @@ class RegistrationController {
       request.fields['club_name'] = data['club_name'].toString();
       request.fields['club_region'] = data['club_region'].toString();
       request.fields['club_president'] = data['club_president'].toString();
-      request.fields['national_president'] =
-          data['national_president'].toString();
+      // request.fields['national_president'] =
+      //     data['national_president'].toString();
       request.fields['date'] = data['date'].toString();
       request.fields['pe_ID'] = data['pe_ID'].toString();
-      request.fields['club_secretry_name'] =
-          data['club_secretry_name'].toString();
-      request.fields['club_secretry_NO'] = data['club_secretry_NO'].toString();
+      // request.fields['club_secretry_name'] =
+      //     data['club_secretry_name'].toString();
+      // request.fields['club_secretry_NO'] = data['club_secretry_NO'].toString();
       request.fields['lattitiude'] = data['lattitiude'].toString();
       request.fields['longitude'] = data['longitude'].toString();
+      request.fields['Suffix'] = data['Suffix'].toString();
 
       // Add image file to request
       var governmentIdStream =

@@ -21,4 +21,21 @@ class ProfileController {
     }
     return member;
   }
+
+  /// update profile
+  static Future<bool> updateProfile(ProfileModel member) async {
+    try {
+      var response = await ApiManager.putRequest(
+        member.toJson(),
+        "${URL.baseUrl}updateMember",
+      );
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception('Failed to update member!');
+      }
+    } catch (error) {
+      rethrow;
+    }
+  }
 }

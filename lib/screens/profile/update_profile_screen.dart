@@ -25,15 +25,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class MemberRegistrationScreen extends StatefulWidget {
-  const MemberRegistrationScreen({super.key});
+class UpdateMemeberScreen extends StatefulWidget {
+  const UpdateMemeberScreen({super.key});
 
   @override
-  _MemberRegistrationScreenState createState() =>
-      _MemberRegistrationScreenState();
+  _UpdateMemeberScreenState createState() => _UpdateMemeberScreenState();
 }
 
-class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
+class _UpdateMemeberScreenState extends State<UpdateMemeberScreen>
     with SingleTickerProviderStateMixin {
   bool screenLoaded = false;
 

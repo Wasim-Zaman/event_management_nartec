@@ -149,6 +149,11 @@ class _MemberProfileScreenState extends State<MemberProfileScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const HeadingTextWidget(text: "Suffix"),
+                  ContainerTextWidget(
+                    text: profileModel.suffix.toString(),
+                    icon: Ionicons.person_outline,
+                  ),
                   const HeadingTextWidget(text: "First Name"),
                   ContainerTextWidget(
                     text: profileModel.firstName.toString(),
@@ -223,11 +228,11 @@ class _MemberProfileScreenState extends State<MemberProfileScreen>
                     text: profileModel.clubPresident.toString(),
                     icon: Ionicons.person_outline,
                   ),
-                  const HeadingTextWidget(text: "National President"),
-                  ContainerTextWidget(
-                    text: profileModel.nationalPresident.toString(),
-                    icon: Ionicons.person_outline,
-                  ),
+                  // const HeadingTextWidget(text: "National President"),
+                  // ContainerTextWidget(
+                  //   text: profileModel.nationalPresident.toString(),
+                  //   icon: Ionicons.person_outline,
+                  // ),
                   const HeadingTextWidget(text: "Date Joined"),
                   ContainerTextWidget(
                     text: profileModel.date.toString(),
@@ -240,18 +245,18 @@ class _MemberProfileScreenState extends State<MemberProfileScreen>
                     text: profileModel.peID.toString(),
                     icon: Ionicons.calendar_outline,
                   ),
-                  const HeadingTextWidget(text: "Club Secretary Name"),
-                  ContainerTextWidget(
-                    text: profileModel.clubSecretryName.toString(),
-                    icon: Ionicons.person_outline,
-                  ),
-                  const HeadingTextWidget(
-                    text: "Club Secretary Contact Number",
-                  ),
-                  ContainerTextWidget(
-                    text: profileModel.clubSecretryNO.toString(),
-                    icon: Ionicons.call_outline,
-                  ),
+                  // const HeadingTextWidget(text: "Club Secretary Name"),
+                  // ContainerTextWidget(
+                  //   text: profileModel.clubSecretryName.toString(),
+                  //   icon: Ionicons.person_outline,
+                  // ),
+                  // const HeadingTextWidget(
+                  //   text: "Club Secretary Contact Number",
+                  // ),
+                  // ContainerTextWidget(
+                  //   text: profileModel.clubSecretryNO.toString(),
+                  //   icon: Ionicons.call_outline,
+                  // ),
                 ],
               ),
             )

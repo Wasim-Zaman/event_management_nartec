@@ -1,8 +1,11 @@
 import 'package:event_management/common/constants/app_colors.dart';
 import 'package:event_management/providers/profile/member_profile.dart';
+import 'package:event_management/screens/EaglesClub/eagles_club_screen.dart';
 import 'package:event_management/screens/Event/current_event_screen.dart';
+import 'package:event_management/screens/HelpDisk/help_desk_screen.dart';
 import 'package:event_management/screens/login/member_login_screen.dart';
 import 'package:event_management/screens/profile/member_profile_screen.dart';
+import 'package:event_management/screens/profile/update_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:page_transition/page_transition.dart';
@@ -32,12 +35,37 @@ class AppDrawer extends StatelessWidget {
                       size: 40,
                     ),
                   ),
-                  Text(
-                    context.read<MemberProfile>().email,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                    ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        context.read<MemberProfile>().email,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                        ),
+                      ),
+                      // edit icon
+                      const SizedBox(width: 10),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            PageTransition(
+                              type: PageTransitionType.rightToLeft,
+                              child: const UpdateMemeberScreen(),
+                            ),
+                          );
+                        },
+                        child: const Icon(
+                          Ionicons.pencil_outline,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -50,7 +78,7 @@ class AppDrawer extends StatelessWidget {
                 Navigator.pushReplacement(
                   context,
                   PageTransition(
-                    type: PageTransitionType.leftToRightPop,
+                    type: PageTransitionType.rightToLeft,
                     child: const MemberProfileScreen(),
                   ),
                 );
@@ -64,7 +92,7 @@ class AppDrawer extends StatelessWidget {
                 Navigator.pushReplacement(
                   context,
                   PageTransition(
-                    type: PageTransitionType.leftToRightPop,
+                    type: PageTransitionType.rightToLeft,
                     child: const CurrentEventScreen(),
                   ),
                 );
@@ -75,13 +103,13 @@ class AppDrawer extends StatelessWidget {
               icon: Ionicons.help_outline,
               onTap: () {
                 Navigator.pop(context);
-                // Navigator.pushReplacement(
-                //   context,
-                //   PageTransition(
-                //     type: PageTransitionType.leftToRightPop,
-                //     child: const HelpDeskScreen(),
-                //   ),
-                // );
+                Navigator.pushReplacement(
+                  context,
+                  PageTransition(
+                    type: PageTransitionType.rightToLeft,
+                    child: const HelpDeskScreen(),
+                  ),
+                );
               },
             ),
             DrawerItem(
@@ -89,6 +117,13 @@ class AppDrawer extends StatelessWidget {
               icon: Ionicons.people_outline,
               onTap: () {
                 Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  PageTransition(
+                    type: PageTransitionType.rightToLeft,
+                    child: const EaglesClubScreen(),
+                  ),
+                );
               },
             ),
             DrawerItem(
