@@ -7,10 +7,8 @@ class AppLoadingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: LoadingAnimationWidget.discreteCircle(
+      child: LoadingAnimationWidget.prograssiveDots(
         color: AppColors.primaryColor,
-        secondRingColor: AppColors.secondaryColor,
-        thirdRingColor: AppColors.appBlackColor,
         size: 40,
       ),
     );

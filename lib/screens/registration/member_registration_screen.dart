@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:nb_utils/nb_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MemberRegistrationScreen extends StatefulWidget {
@@ -88,7 +89,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
     "Binaliw",
     "Bito-on",
   ];
-  final List<String> barangayList = [
+  List<String> barangayList = [
     "Alang-alang",
     "Baliok",
     "Bantigue",
@@ -118,9 +119,9 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
   ];
 
   // dropdown values
-  String selectedProvince = "Aklan";
-  String selectedCity = "Alang-alang";
-  String selectedBarangay = "Alang-alang";
+  String selectedProvince = "";
+  String selectedCity = "";
+  String selectedBarangay = "";
   String selectedYesNo = "Yes";
   String selectedSuffix = "Mr";
 
@@ -128,31 +129,34 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
   double lat = 0;
   double lng = 0;
   String address = "";
+  int selectedProvinceId = 0;
 
   Set<Marker> markers = {};
   @override
   void initState() {
     super.initState();
-
+    tabController.addListener(() {
+      setState(() {});
+    });
     Future.wait(
       [
         // Api calls
-        RegistrationController.getAllCities().then((response) {
-          Future.delayed(Duration.zero, () {
-            citiesList = response.map((city) {
-              return city.citiyname.toString();
-            }).toList();
-            selectedCity = citiesList.first;
-          });
-        }),
-        RegistrationController.getAllProvinces().then((response) {
-          Future.delayed(Duration.zero, () {
-            provinceList = response.map((province) {
-              return province.provincename.toString();
-            }).toList();
-            selectedProvince = provinceList.first;
-          });
-        }),
+        // RegistrationController.getAllCities().then((response) {
+        //   Future.delayed(Duration.zero, () {
+        //     citiesList = response.map((city) {
+        //       return city.citiyname.toString();
+        //     }).toList();
+        //     selectedCity = citiesList.first;
+        //   });
+        // }),
+        // RegistrationController.getAllProvinces().then((response) {
+        //   Future.delayed(Duration.zero, () {
+        //     provinceList = response.map((province) {
+        //       return province.provincename.toString();
+        //     }).toList();
+        //     selectedProvince = provinceList.first;
+        //   });
+        // }),
       ],
     ).then((_) {
       Future.delayed(const Duration(milliseconds: 500), () {
@@ -342,44 +346,115 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                     },
                   ),
                   const SizedBox(height: 10.0),
-                  const RequiredTextWidget(text: "Province"),
+                  const RequiredTextWidget(text: "City"),
                   const SizedBox(height: 5.0),
-                  // province dropdown
-                  DropdownWidget(
-                    stringList: provinceList,
-                    selectedString: selectedProvince,
-                    onChanged: (p0) {
-                      setState(() {
-                        selectedProvince = p0!;
-                      });
+                  FutureBuilder(
+                    future: RegistrationController.getAllCities(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const AppLoadingWidget();
+                      }
+                      if (snapshot.hasError) {
+                        return const AppLoadingWidget();
+                      }
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        if (selectedCity == "") {
+                          selectedCity = snapshot.data!.first.citiyname!;
+                        }
+                        citiesList = snapshot.data!
+                            .map((e) => e.citiyname!)
+                            .toSet()
+                            .toList();
+                        selectedProvinceId = snapshot.data!
+                            .firstWhere(
+                                (element) => element.citiyname == selectedCity)
+                            .provanceID!;
+                        return DropdownWidget(
+                          stringList: citiesList,
+                          selectedString: selectedCity,
+                          onChanged: (p0) {
+                            setState(() {
+                              selectedCity = p0!;
+                              selectedProvinceId = snapshot.data!
+                                  .firstWhere((element) =>
+                                      element.citiyname == selectedCity)
+                                  .provanceID!;
+                            });
+                          },
+                        );
+                      }
+                      return const AppLoadingWidget();
                     },
                   ),
                   const SizedBox(height: 10.0),
-                  const RequiredTextWidget(text: "City"),
+                  const RequiredTextWidget(text: "Province"),
                   const SizedBox(height: 5.0),
-                  // city dropdown
-                  DropdownWidget(
-                    stringList: citiesList,
-                    selectedString: selectedCity,
-                    onChanged: (p0) {
-                      setState(() {
-                        selectedCity = p0!;
-                      });
+                  FutureBuilder(
+                    future: RegistrationController.getAllProvinces(
+                      selectedProvinceId,
+                    ),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const AppLoadingWidget();
+                      }
+                      if (snapshot.hasError) {
+                        return const AppLoadingWidget();
+                      }
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        provinceList = snapshot.data!
+                            .map((e) => e.provincename!)
+                            .toSet()
+                            .toList();
+                        return DropdownWidget(
+                          stringList: provinceList,
+                          selectedString: selectedProvince == ""
+                              ? provinceList.first
+                              : selectedProvince,
+                          onChanged: (p0) {
+                            setState(() {
+                              selectedProvince = p0!;
+                            });
+                          },
+                        );
+                      }
+                      return const AppLoadingWidget();
                     },
-                  ),
+                  ).visible(selectedProvinceId != 0),
                   const SizedBox(height: 10.0),
                   const RequiredTextWidget(text: "Barangay"),
                   const SizedBox(height: 5.0),
-                  // barangay dropdown
-                  DropdownWidget(
-                    stringList: barangayList,
-                    selectedString: selectedBarangay,
-                    onChanged: (p0) {
-                      setState(() {
-                        selectedBarangay = p0!;
-                      });
+                  FutureBuilder(
+                    future: RegistrationController.getAllBarangay(
+                      selectedProvinceId,
+                    ),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const AppLoadingWidget();
+                      }
+                      if (snapshot.hasError) {
+                        return const AppLoadingWidget();
+                      }
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        barangayList = snapshot.data!
+                            .map((e) => e.barangayName!)
+                            .toSet()
+                            .toList();
+                        return DropdownWidget(
+                          stringList: barangayList,
+                          selectedString: selectedBarangay == ""
+                              ? barangayList.first
+                              : selectedBarangay,
+                          onChanged: (p0) {
+                            setState(() {
+                              selectedBarangay = p0!;
+                            });
+                          },
+                        );
+                      }
+                      return const AppLoadingWidget();
                     },
-                  ),
+                  ).visible(selectedProvinceId != 0),
+                  const SizedBox(height: 10.0),
                   const SizedBox(height: 10.0),
                   const RequiredTextWidget(text: "Street Address"),
                   const SizedBox(height: 5.0),
@@ -486,6 +561,11 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                       TextButton(
                         onPressed: () async {
                           try {
+                            if (governmentIdFile != null) {
+                              governmentIdFile = null;
+                              setState(() {});
+                              return;
+                            }
                             governmentIdFile =
                                 await appImagePicker(ImageSource.gallery);
                             setState(() {});
@@ -513,6 +593,11 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                       TextButton(
                         onPressed: () async {
                           try {
+                            if (selfieWithGovernmentIdFile != null) {
+                              selfieWithGovernmentIdFile = null;
+                              setState(() {});
+                              return;
+                            }
                             selfieWithGovernmentIdFile =
                                 await appImagePicker(ImageSource.camera);
 

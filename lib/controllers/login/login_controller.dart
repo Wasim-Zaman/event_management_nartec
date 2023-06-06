@@ -25,7 +25,6 @@ class LoginController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print(json.decode(response.body));
         // final responseBody = jsonDecode(response.body)["recordset"] as List;
         // if (responseBody.isEmpty) {
         //   Fluttertoast.showToast(
@@ -50,9 +49,14 @@ class LoginController {
             ),
           );
         }
+      } else if (response.statusCode > 500) {
+        Fluttertoast.showToast(
+          msg: "Internal Server Error, Please try again later",
+          backgroundColor: AppColors.dangerColor,
+        );
       } else {
         Fluttertoast.showToast(
-          msg: "Invalid status code",
+          msg: "Invalid credentials",
           backgroundColor: AppColors.dangerColor,
         );
       }
