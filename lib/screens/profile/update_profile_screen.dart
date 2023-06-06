@@ -654,6 +654,12 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen>
                       TextButton(
                         onPressed: () async {
                           try {
+                            // if user selects no image, it will throw an error
+                            if (governmentIdFile != null) {
+                              governmentIdFile = null;
+                              setState(() {});
+                              return;
+                            }
                             governmentIdFile =
                                 await appImagePicker(ImageSource.gallery);
                             setState(() {});
@@ -681,6 +687,11 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen>
                       TextButton(
                         onPressed: () async {
                           try {
+                            if (selfieWithGovernmentIdFile != null) {
+                              selfieWithGovernmentIdFile = null;
+                              setState(() {});
+                              return;
+                            }
                             selfieWithGovernmentIdFile =
                                 await appImagePicker(ImageSource.camera);
                             setState(() {});

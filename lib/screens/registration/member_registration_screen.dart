@@ -599,8 +599,7 @@ class _MemberRegistrationScreenState extends State<MemberRegistrationScreen>
                               return;
                             }
                             selfieWithGovernmentIdFile =
-                                await appImagePicker(ImageSource.camera);
-
+                                await appImagePicker(ImageSource.gallery);
                             setState(() {});
                           } catch (e) {
                             ScaffoldMessenger.of(context).showSnackBar(
